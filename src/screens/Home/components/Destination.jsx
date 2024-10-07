@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
   },
   googlePlacesContainer: {
     flex: 1,
-    marginTop: 20,
+    marginTop: 30,
   },
   googlePlaces: {
     container: {
@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
     textInputContainer: {
       backgroundColor: themeColors.WHITE,
       borderRadius: 5,
-      padding: 10,
+      paddingBottom: 10,
     },
     textInput: {
       height: 40,
