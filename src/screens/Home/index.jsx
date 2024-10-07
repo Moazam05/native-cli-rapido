@@ -3,6 +3,7 @@ import React from 'react';
 import {themeColors} from '../../constants/colors';
 import MapView, {PROVIDER_GOOGLE} from 'react-native-maps';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 const Home = () => {
   return (
@@ -21,10 +22,11 @@ const Home = () => {
 
         <View style={styles.searchBarContainer}>
           <View style={styles.menuButton}>
-            <Ionicons name="menu" size={25} color={themeColors.GRAY} />
+            <Ionicons name="menu" size={22} color={themeColors.GRAY} />
           </View>
 
           <View style={styles.searchBar}>
+            <FontAwesome name="circle-o" size={17} color={themeColors.GRAY} />
             <TextInput value="" placeholder="Current Location" />
           </View>
         </View>
@@ -51,8 +53,8 @@ const styles = StyleSheet.create({
   searchBarContainer: {
     position: 'absolute',
     top: 30,
-    right: 20,
-    left: 20,
+    right: 15,
+    left: 15,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 15,
@@ -78,6 +80,9 @@ const styles = StyleSheet.create({
     flex: 1,
     borderRadius: 30,
     paddingHorizontal: 15,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
   },
   bottomContainer: {
     flex: 0.3,
