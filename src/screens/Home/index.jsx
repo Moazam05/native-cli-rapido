@@ -15,6 +15,7 @@ import {SplashLogo} from '../../assets/images';
 import {themeColors} from '../../constants/colors';
 import axios from 'axios';
 import {GOOGLE_MAPS_API_KEY} from '@env';
+import RideOption from './components/RideOption';
 
 const Home = ({navigation, route}) => {
   const mapRef = useRef();
@@ -202,10 +203,10 @@ const Home = ({navigation, route}) => {
       </View>
 
       <View style={styles.bottomContainer}>
-        <TouchableOpacity
-          style={styles.bottomContainerInner}
-          onPress={() => navigation.navigate('Destination', {userLocation})}>
-          <View style={styles.bottomBar}>
+        <View style={styles.bottomContainerInner}>
+          <TouchableOpacity
+            style={styles.bottomBar}
+            onPress={() => navigation.navigate('Destination', {userLocation})}>
             <Ionicons name="search" size={19} color={themeColors.BLACK} />
             <TextInput
               value={formatAddress}
@@ -213,8 +214,17 @@ const Home = ({navigation, route}) => {
               editable={false}
               style={{flex: 1, color: themeColors.BLACK}}
             />
+          </TouchableOpacity>
+
+          <View
+            style={{
+              flex: 1,
+            }}>
+            <RideOption iconName="bicycle" label="Bike" />
+            <RideOption iconName="car-sport-outline" label="Car" />
+            <RideOption iconName="car" label="Auto" />
           </View>
-        </TouchableOpacity>
+        </View>
       </View>
     </View>
   );
