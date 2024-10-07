@@ -1,6 +1,7 @@
 import React from 'react';
 import {View, StyleSheet} from 'react-native';
 import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
+import {GOOGLE_MAPS_API_KEY} from '@env';
 
 const Destination = () => {
   return (
@@ -11,7 +12,7 @@ const Destination = () => {
           console.log(data, details);
         }}
         query={{
-          key: 'AIzaSyBBSc-sNUvUla_YYobjN9za0nWnhw-ByeE',
+          key: GOOGLE_MAPS_API_KEY,
           language: 'en',
         }}
         styles={styles.googlePlaces}
