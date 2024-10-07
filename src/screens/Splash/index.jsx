@@ -1,29 +1,35 @@
-import {Image, StyleSheet, Text, View} from 'react-native';
-import React from 'react';
-import Icon from 'react-native-vector-icons/FontAwesome5';
+import {Image, StatusBar, StyleSheet, View} from 'react-native';
+import React, {useEffect} from 'react';
 import {SplashLogo} from '../../assets/images';
+import {themeColors} from '../../constants/colors';
 
-const Splash = () => {
+const Splash = ({navigation}) => {
+  useEffect(() => {
+    setTimeout(() => {
+      navigation.replace('Home');
+    }, 2000);
+  }, []);
+
   return (
-    <View
-      style={{
-        flex: 1,
-        backgroundColor: 'white',
-        justifyContent: 'center',
-        alignItems: 'center',
-      }}>
-      <Image
-        source={SplashLogo}
-        style={{
-          width: 100,
-          height: 100,
-          resizeMode: 'contain',
-        }}
-      />
+    <View style={styles.container}>
+      <StatusBar backgroundColor={themeColors.WHITE} barStyle="dark-content" />
+      <Image source={SplashLogo} style={styles.splash} />
     </View>
   );
 };
 
 export default Splash;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: themeColors.WHITE,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  splash: {
+    width: '100%',
+    height: 150,
+    resizeMode: 'contain',
+  },
+});
