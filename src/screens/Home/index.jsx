@@ -33,25 +33,10 @@ const Home = () => {
       </View>
 
       <View style={styles.bottomContainer}>
-        <View
-          style={{
-            backgroundColor: '#E7E7E7',
-            height: '100%',
-            borderRadius: 20,
-          }}>
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              backgroundColor: themeColors.WHITE,
-              marginHorizontal: 15,
-              marginVertical: 15,
-              paddingHorizontal: 15,
-              borderRadius: 25,
-              gap: 10,
-            }}>
+        <View style={styles.bottomContainerInner}>
+          <View style={styles.bottomBar}>
             <Ionicons name="search" size={19} color={themeColors.BLACK} />
-            <TextInput value="" placeholder="Where are you going s?" />
+            <TextInput value="" placeholder="Where are you going ?" />
           </View>
         </View>
       </View>
@@ -110,5 +95,20 @@ const styles = StyleSheet.create({
     flex: 0.3,
     paddingHorizontal: 15,
     paddingVertical: 20,
+  },
+  bottomContainerInner: {
+    backgroundColor: '#E7E7E7',
+    height: '100%',
+    borderRadius: 20,
+  },
+  bottomBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: themeColors.WHITE,
+    marginHorizontal: 15,
+    marginVertical: 15,
+    paddingHorizontal: 15,
+    borderRadius: 25,
+    gap: 10,
   },
 });
