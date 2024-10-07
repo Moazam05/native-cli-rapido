@@ -1,11 +1,27 @@
 import {StyleSheet, Text, TextInput, View} from 'react-native';
-import React from 'react';
+import React, {useEffect} from 'react';
 import {themeColors} from '../../constants/colors';
 import MapView, {PROVIDER_GOOGLE} from 'react-native-maps';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import GetLocation from 'react-native-get-location';
 
 const Home = () => {
+  useEffect(() => {
+    GetLocation.getCurrentPosition({
+      enableHighAccuracy: false,
+      timeout: 50000,
+      maximumAge: 10000,
+    })
+      .then(location => {
+        console.log(location);
+      })
+      .catch(error => {
+        const {code, message} = error;
+        console.warn(code, message);
+      });
+  }, []);
+
   return (
     <View style={styles.container}>
       <View style={styles.mapContainer}>
