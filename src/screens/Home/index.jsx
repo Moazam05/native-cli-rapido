@@ -1,36 +1,83 @@
-import {StyleSheet, Text, TextInput, View} from 'react-native';
+import {Image, StyleSheet, Text, TextInput, View} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {themeColors} from '../../constants/colors';
 import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import GetLocation from 'react-native-get-location';
+import {check, request, PERMISSIONS} from 'react-native-permissions';
+import {SplashLogo} from '../../assets/images';
 
 const Home = () => {
-  const [userLocation, setUserLocation] = useState({
-    latitude: 37.78825,
-    longitude: -122.4324,
-  });
-
-  console.log('userLocation', userLocation);
+  const [userLocation, setUserLocation] = useState(null); // Initially null to show loading state
+  const [locationPermission, setLocationPermission] = useState(null);
+  const [searchInput, setSearchInput] = useState(''); // For TextInput value
 
   useEffect(() => {
-    GetLocation.getCurrentPosition({
-      enableHighAccuracy: false,
-      timeout: 50000,
-      maximumAge: 10000,
-    })
-      .then(location => {
-        setUserLocation({
-          latitude: location.latitude,
-          longitude: location.longitude,
-        });
-      })
-      .catch(error => {
-        const {code, message} = error;
-        console.warn(code, message);
-      });
+    const checkLocationPermission = async () => {
+      const fineLocation = await check(
+        PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
+      );
+      const coarseLocation = await check(
+        PERMISSIONS.ANDROID.ACCESS_COARSE_LOCATION,
+      );
+
+      if (
+        fineLocation === 'undetermined' ||
+        coarseLocation === 'undetermined'
+      ) {
+        const requestedPermission = await request(
+          PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
+        );
+        setLocationPermission(requestedPermission);
+      } else if (fineLocation === 'granted' || coarseLocation === 'granted') {
+        setLocationPermission('granted');
+      } else {
+        setLocationPermission(fineLocation);
+      }
+    };
+
+    checkLocationPermission(); // Moved inside useEffect so it runs once after component mounts
   }, []);
+
+  useEffect(() => {
+    const getLocation = async () => {
+      if (locationPermission === 'granted') {
+        // Only fetch location if permission is granted
+        try {
+          const location = await GetLocation.getCurrentPosition({
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 0,
+          });
+          setUserLocation({
+            latitude: location.latitude,
+            longitude: location.longitude,
+          });
+        } catch (error) {
+          console.error('Error getting location:', error);
+        }
+      }
+    };
+
+    getLocation();
+  }, [locationPermission]);
+
+  if (!userLocation) {
+    // Optional: Render loading UI while fetching location
+    return (
+      <View style={styles.loadingContainer}>
+        <Image
+          source={SplashLogo}
+          styles={{
+            width: '100%',
+            height: 100,
+            resizeMode: 'contain',
+          }}
+        />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -39,7 +86,7 @@ const Home = () => {
           style={styles.map}
           provider={PROVIDER_GOOGLE}
           showsUserLocation
-          showsMyLocationButton
+          showsMyLocationButtons
           initialRegion={{
             latitude: userLocation?.latitude,
             longitude: userLocation?.longitude,
@@ -61,7 +108,11 @@ const Home = () => {
 
           <View style={styles.searchBar}>
             <FontAwesome name="circle-o" size={17} color={themeColors.GREEN} />
-            <TextInput value="" placeholder="Current Location" />
+            <TextInput
+              value={searchInput}
+              placeholder="Current Location"
+              onChangeText={setSearchInput}
+            />
           </View>
         </View>
       </View>
@@ -70,7 +121,11 @@ const Home = () => {
         <View style={styles.bottomContainerInner}>
           <View style={styles.bottomBar}>
             <Ionicons name="search" size={19} color={themeColors.BLACK} />
-            <TextInput value="" placeholder="Where are you going ?" />
+            <TextInput
+              value={searchInput}
+              placeholder="Where are you going ?"
+              onChangeText={setSearchInput}
+            />
           </View>
         </View>
       </View>
@@ -83,6 +138,12 @@ export default Home;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: themeColors.WHITE,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
     backgroundColor: themeColors.WHITE,
   },
   mapContainer: {
