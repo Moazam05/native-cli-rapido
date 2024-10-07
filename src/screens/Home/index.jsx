@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {Image, StyleSheet, TextInput, View} from 'react-native';
 import GetLocation from 'react-native-get-location';
 import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
@@ -7,11 +7,16 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {SplashLogo} from '../../assets/images';
 import {themeColors} from '../../constants/colors';
+import axios from 'axios';
+import {GOOGLE_MAPS_API_KEY} from '@env';
 
 const Home = () => {
+  const mapRef = useRef();
+
   const [userLocation, setUserLocation] = useState(null);
   const [locationPermission, setLocationPermission] = useState(null);
   const [searchInput, setSearchInput] = useState('');
+  const [currentAddress, setCurrentAddress] = useState('');
 
   useEffect(() => {
     const checkLocationPermission = async () => {
@@ -53,6 +58,15 @@ const Home = () => {
             latitude: location.latitude,
             longitude: location.longitude,
           });
+
+          if (mapRef) {
+            mapRef.current.animateToRegion({
+              latitude: location.latitude,
+              longitude: location.longitude,
+              latitudeDelta: 0.015,
+              longitudeDelta: 0.015,
+            });
+          }
         } catch (error) {
           console.error('Error getting location:', error);
         }
@@ -62,6 +76,24 @@ const Home = () => {
     getLocation();
   }, [locationPermission]);
 
+  useEffect(() => {
+    const fetchAddress = async () => {
+      try {
+        const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${userLocation.latitude},${userLocation.longitude}&key=${GOOGLE_MAPS_API_KEY}`;
+        const response = await axios.get(url);
+        console.log(response.data.results[0]?.formatted_address);
+        if (response) {
+          setCurrentAddress(response.data.results[0]?.formatted_address);
+        }
+      } catch (error) {
+        console.error('Error getting address:', error);
+      }
+    };
+
+    fetchAddress();
+  }, [userLocation]);
+
+  // todo: Loading State
   if (!userLocation) {
     return (
       <View style={styles.loadingContainer}>
@@ -74,6 +106,7 @@ const Home = () => {
     <View style={styles.container}>
       <View style={styles.mapContainer}>
         <MapView
+          ref={mapRef}
           style={styles.map}
           provider={PROVIDER_GOOGLE}
           showsUserLocation={false}
@@ -100,9 +133,9 @@ const Home = () => {
           <View style={styles.searchBar}>
             <FontAwesome name="circle-o" size={17} color={themeColors.GREEN} />
             <TextInput
-              value={searchInput}
               placeholder="Current Location"
-              onChangeText={setSearchInput}
+              value={currentAddress}
+              onChangeText={e => setCurrentAddress(e)}
             />
           </View>
         </View>
