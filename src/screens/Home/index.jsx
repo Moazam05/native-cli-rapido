@@ -1,17 +1,17 @@
-import {Image, StyleSheet, Text, TextInput, View} from 'react-native';
 import React, {useEffect, useState} from 'react';
-import {themeColors} from '../../constants/colors';
-import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import {Image, StyleSheet, TextInput, View} from 'react-native';
 import GetLocation from 'react-native-get-location';
-import {check, request, PERMISSIONS} from 'react-native-permissions';
+import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
+import {check, PERMISSIONS, request} from 'react-native-permissions';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import {SplashLogo} from '../../assets/images';
+import {themeColors} from '../../constants/colors';
 
 const Home = () => {
-  const [userLocation, setUserLocation] = useState(null); // Initially null to show loading state
+  const [userLocation, setUserLocation] = useState(null);
   const [locationPermission, setLocationPermission] = useState(null);
-  const [searchInput, setSearchInput] = useState(''); // For TextInput value
+  const [searchInput, setSearchInput] = useState('');
 
   useEffect(() => {
     const checkLocationPermission = async () => {
@@ -37,13 +37,12 @@ const Home = () => {
       }
     };
 
-    checkLocationPermission(); // Moved inside useEffect so it runs once after component mounts
+    checkLocationPermission();
   }, []);
 
   useEffect(() => {
     const getLocation = async () => {
       if (locationPermission === 'granted') {
-        // Only fetch location if permission is granted
         try {
           const location = await GetLocation.getCurrentPosition({
             enableHighAccuracy: true,
@@ -64,17 +63,9 @@ const Home = () => {
   }, [locationPermission]);
 
   if (!userLocation) {
-    // Optional: Render loading UI while fetching location
     return (
       <View style={styles.loadingContainer}>
-        <Image
-          source={SplashLogo}
-          styles={{
-            width: '100%',
-            height: 100,
-            resizeMode: 'contain',
-          }}
-        />
+        <Image source={SplashLogo} style={styles.splash} />
       </View>
     );
   }
@@ -85,8 +76,8 @@ const Home = () => {
         <MapView
           style={styles.map}
           provider={PROVIDER_GOOGLE}
-          showsUserLocation
-          showsMyLocationButtons
+          showsUserLocation={false}
+          showsMyLocationButtons={false}
           initialRegion={{
             latitude: userLocation?.latitude,
             longitude: userLocation?.longitude,
@@ -205,5 +196,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     borderRadius: 25,
     gap: 10,
+  },
+  splash: {
+    width: '100%',
+    height: 150,
+    resizeMode: 'contain',
   },
 });
