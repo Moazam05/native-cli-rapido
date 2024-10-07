@@ -11,23 +11,19 @@ const Destination = ({navigation, route}) => {
   const userLocation = route?.params?.userLocation || {};
 
   const handlePlaceClick = (data, details = null) => {
-    const {geometry} = details || {};
+    const geometry = details?.geometry;
+    if (!geometry) {
+      return;
+    }
 
-    if (geometry) {
-      const {location} = geometry;
-      const {lat, lng} = location;
-      const destination = {latitude: lat, longitude: lng};
+    const {lat, lng} = geometry.location;
+    const destination = {latitude: lat, longitude: lng};
+    const distanceInKm = getDistance(userLocation, destination) / 1000;
 
-      const distance = getDistance(userLocation, destination);
-      // convert to km
-      // 1 km = 1000 meters
-      const distanceInKm = distance / 1000;
-      if (distanceInKm >= 50) {
-        Alert.alert('Error', 'Destination is too far');
-        return;
-      } else {
-        navigation.navigate('Home', {details});
-      }
+    if (distanceInKm >= 10) {
+      Alert.alert('Error', 'Destination is too far');
+    } else {
+      navigation.navigate('Home', {details});
     }
   };
 
