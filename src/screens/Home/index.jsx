@@ -1,5 +1,11 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {Image, StyleSheet, TextInput, View} from 'react-native';
+import {
+  Image,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import GetLocation from 'react-native-get-location';
 import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
 import {check, PERMISSIONS, request} from 'react-native-permissions';
@@ -10,12 +16,16 @@ import {themeColors} from '../../constants/colors';
 import axios from 'axios';
 import {GOOGLE_MAPS_API_KEY} from '@env';
 
-const Home = () => {
+const Home = ({navigation, route}) => {
   const mapRef = useRef();
+  const destination = route?.params?.details?.geometry?.location || {};
+  const formatAddress = route?.params?.details?.formatted_address || '';
+  const {lat, lng} = destination;
+  console.log('Destination:', lat, lng);
+  console.log('Formatted Address:', formatAddress);
 
   const [userLocation, setUserLocation] = useState(null);
   const [locationPermission, setLocationPermission] = useState(null);
-  const [searchInput, setSearchInput] = useState('');
   const [currentAddress, setCurrentAddress] = useState('');
 
   useEffect(() => {
@@ -82,7 +92,7 @@ const Home = () => {
         try {
           const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${userLocation.latitude},${userLocation.longitude}&key=${GOOGLE_MAPS_API_KEY}`;
           const response = await axios.get(url);
-          console.log(response.data.results[0]?.formatted_address);
+          // console.log(response.data.results[0]?.formatted_address);
           if (response) {
             const address = response.data.results[0]?.formatted_address;
             setCurrentAddress(address);
@@ -146,16 +156,19 @@ const Home = () => {
       </View>
 
       <View style={styles.bottomContainer}>
-        <View style={styles.bottomContainerInner}>
+        <TouchableOpacity
+          style={styles.bottomContainerInner}
+          onPress={() => navigation.navigate('Destination')}>
           <View style={styles.bottomBar}>
             <Ionicons name="search" size={19} color={themeColors.BLACK} />
             <TextInput
-              value={searchInput}
+              value={formatAddress}
               placeholder="Where are you going ?"
-              onChangeText={setSearchInput}
+              editable={false}
+              style={{flex: 1, color: themeColors.BLACK}}
             />
           </View>
-        </View>
+        </TouchableOpacity>
       </View>
     </View>
   );
