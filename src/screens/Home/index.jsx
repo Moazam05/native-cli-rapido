@@ -204,7 +204,7 @@ const Home = ({navigation, route}) => {
       <View style={styles.bottomContainer}>
         <TouchableOpacity
           style={styles.bottomContainerInner}
-          onPress={() => navigation.navigate('Destination')}>
+          onPress={() => navigation.navigate('Destination', {userLocation})}>
           <View style={styles.bottomBar}>
             <Ionicons name="search" size={19} color={themeColors.BLACK} />
             <TextInput

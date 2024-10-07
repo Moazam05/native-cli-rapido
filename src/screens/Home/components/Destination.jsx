@@ -1,12 +1,36 @@
 import React from 'react';
-import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity, Alert} from 'react-native';
 import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
 import {themeColors} from '../../../constants/colors';
 import {GOOGLE_MAPS_API_KEY} from '@env';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {Fonts} from '../../../constants/fonts';
+import {getDistance} from 'geolib';
 
-const Destination = ({navigation}) => {
+const Destination = ({navigation, route}) => {
+  const userLocation = route?.params?.userLocation || {};
+
+  const handlePlaceClick = (data, details = null) => {
+    const {geometry} = details || {};
+
+    if (geometry) {
+      const {location} = geometry;
+      const {lat, lng} = location;
+      const destination = {latitude: lat, longitude: lng};
+
+      const distance = getDistance(userLocation, destination);
+      // convert to km
+      // 1 km = 1000 meters
+      const distanceInKm = distance / 1000;
+      if (distanceInKm >= 50) {
+        Alert.alert('Error', 'Destination is too far');
+        return;
+      } else {
+        navigation.navigate('Home', {details});
+      }
+    }
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -19,10 +43,11 @@ const Destination = ({navigation}) => {
       <View style={styles.googlePlacesContainer}>
         <GooglePlacesAutocomplete
           placeholder="Search"
-          onPress={(data, details = null) => {
-            // console.log('Google Places Data', data, details);
-            navigation.navigate('Home', {details});
-          }}
+          //   onPress={(data, details = null) => {
+          // console.log('Google Places Data', data, details);
+          //     navigation.navigate('Home', {details});
+          //   }}
+          onPress={handlePlaceClick}
           query={{
             key: GOOGLE_MAPS_API_KEY,
             language: 'en',
