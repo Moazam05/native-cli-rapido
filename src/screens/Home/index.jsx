@@ -21,8 +21,6 @@ const Home = ({navigation, route}) => {
   const destination = route?.params?.details?.geometry?.location || {};
   const formatAddress = route?.params?.details?.formatted_address || '';
   const {lat, lng} = destination;
-  console.log('Destination:', lat, lng);
-  console.log('Formatted Address:', formatAddress);
 
   const [userLocation, setUserLocation] = useState(null);
   const [locationPermission, setLocationPermission] = useState(null);
@@ -106,6 +104,25 @@ const Home = ({navigation, route}) => {
     }
   }, [userLocation]);
 
+  useEffect(() => {
+    if ((lat, lng)) {
+      const coordinates = [
+        {
+          latitude: userLocation.latitude,
+          longitude: userLocation.longitude,
+        },
+        {
+          latitude: lat,
+          longitude: lng,
+        },
+      ];
+      mapRef.current.fitToCoordinates(coordinates, {
+        edgePadding: {top: 50, right: 50, bottom: 50, left: 50},
+        animated: true,
+      });
+    }
+  }, [lat, lng, currentAddress]);
+
   // todo: Loading State
   if (!userLocation) {
     return (
@@ -136,6 +153,16 @@ const Home = ({navigation, route}) => {
               longitude: userLocation?.longitude,
             }}
           />
+
+          {lat && lng && (
+            <Marker
+              coordinate={{
+                latitude: lat,
+                longitude: lng,
+              }}
+              pinColor={themeColors.GREEN}
+            />
+          )}
         </MapView>
 
         <View style={styles.searchBarContainer}>
