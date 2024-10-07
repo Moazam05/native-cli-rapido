@@ -38,6 +38,8 @@ const Home = () => {
         <MapView
           style={styles.map}
           provider={PROVIDER_GOOGLE}
+          showsUserLocation
+          showsMyLocationButton
           initialRegion={{
             latitude: userLocation?.latitude,
             longitude: userLocation?.longitude,
