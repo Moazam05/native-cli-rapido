@@ -1,12 +1,19 @@
 import {StyleSheet, Text, TextInput, View} from 'react-native';
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {themeColors} from '../../constants/colors';
-import MapView, {PROVIDER_GOOGLE} from 'react-native-maps';
+import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import GetLocation from 'react-native-get-location';
 
 const Home = () => {
+  const [userLocation, setUserLocation] = useState({
+    latitude: 37.78825,
+    longitude: -122.4324,
+  });
+
+  console.log('userLocation', userLocation);
+
   useEffect(() => {
     GetLocation.getCurrentPosition({
       enableHighAccuracy: false,
@@ -14,7 +21,10 @@ const Home = () => {
       maximumAge: 10000,
     })
       .then(location => {
-        console.log(location);
+        setUserLocation({
+          latitude: location.latitude,
+          longitude: location.longitude,
+        });
       })
       .catch(error => {
         const {code, message} = error;
@@ -29,12 +39,18 @@ const Home = () => {
           style={styles.map}
           provider={PROVIDER_GOOGLE}
           initialRegion={{
-            latitude: 37.78825,
-            longitude: -122.4324,
+            latitude: userLocation?.latitude,
+            longitude: userLocation?.longitude,
             latitudeDelta: 0.0922,
             longitudeDelta: 0.0421,
-          }}
-        />
+          }}>
+          <Marker
+            coordinate={{
+              latitude: userLocation?.latitude,
+              longitude: userLocation?.longitude,
+            }}
+          />
+        </MapView>
 
         <View style={styles.searchBarContainer}>
           <View style={styles.menuButton}>
@@ -75,7 +91,7 @@ const styles = StyleSheet.create({
   },
   searchBarContainer: {
     position: 'absolute',
-    top: 30,
+    top: 25,
     right: 15,
     left: 15,
     flexDirection: 'row',
