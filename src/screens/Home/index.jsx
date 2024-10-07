@@ -7,7 +7,7 @@ import {
   View,
 } from 'react-native';
 import GetLocation from 'react-native-get-location';
-import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
+import MapView, {Marker, PROVIDER_GOOGLE, Polyline} from 'react-native-maps';
 import {check, PERMISSIONS, request} from 'react-native-permissions';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -117,7 +117,7 @@ const Home = ({navigation, route}) => {
         },
       ];
       mapRef.current.fitToCoordinates(coordinates, {
-        edgePadding: {top: 50, right: 50, bottom: 50, left: 50},
+        edgePadding: {top: 150, right: 50, bottom: 50, left: 50},
         animated: true,
       });
     }
@@ -154,6 +154,7 @@ const Home = ({navigation, route}) => {
             }}
           />
 
+          {/* Destination Marker */}
           {lat && lng && (
             <Marker
               coordinate={{
@@ -161,6 +162,24 @@ const Home = ({navigation, route}) => {
                 longitude: lng,
               }}
               pinColor={themeColors.GREEN}
+            />
+          )}
+
+          {/* Polyline */}
+          {lat && lng && (
+            <Polyline
+              coordinates={[
+                {
+                  latitude: userLocation.latitude,
+                  longitude: userLocation.longitude,
+                },
+                {
+                  latitude: lat,
+                  longitude: lng,
+                },
+              ]}
+              strokeColor="#238C23"
+              strokeWidth={1.7}
             />
           )}
         </MapView>
