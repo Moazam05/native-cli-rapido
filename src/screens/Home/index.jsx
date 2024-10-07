@@ -9,6 +9,7 @@ import {SplashLogo} from '../../assets/images';
 import {themeColors} from '../../constants/colors';
 import axios from 'axios';
 import {GOOGLE_MAPS_API_KEY} from '@env';
+import Destination from './components/Destination';
 
 const Home = () => {
   const mapRef = useRef();
@@ -149,14 +150,15 @@ const Home = () => {
 
       <View style={styles.bottomContainer}>
         <View style={styles.bottomContainerInner}>
-          <View style={styles.bottomBar}>
+          {/* <View style={styles.bottomBar}>
             <Ionicons name="search" size={19} color={themeColors.BLACK} />
             <TextInput
               value={searchInput}
               placeholder="Where are you going ?"
               onChangeText={setSearchInput}
             />
-          </View>
+          </View> */}
+          <Destination />
         </View>
       </View>
     </View>
