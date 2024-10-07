@@ -18,6 +18,8 @@ const Home = () => {
   const [searchInput, setSearchInput] = useState('');
   const [currentAddress, setCurrentAddress] = useState('');
 
+  console.log('currentAddress', currentAddress);
+
   useEffect(() => {
     const checkLocationPermission = async () => {
       const fineLocation = await check(
@@ -77,20 +79,23 @@ const Home = () => {
   }, [locationPermission]);
 
   useEffect(() => {
-    const fetchAddress = async () => {
-      try {
-        const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${userLocation.latitude},${userLocation.longitude}&key=${GOOGLE_MAPS_API_KEY}`;
-        const response = await axios.get(url);
-        console.log(response.data.results[0]?.formatted_address);
-        if (response) {
-          setCurrentAddress(response.data.results[0]?.formatted_address);
+    if (userLocation) {
+      const fetchAddress = async () => {
+        try {
+          const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${userLocation.latitude},${userLocation.longitude}&key=${GOOGLE_MAPS_API_KEY}`;
+          const response = await axios.get(url);
+          console.log(response.data.results[0]?.formatted_address);
+          if (response) {
+            const address = response.data.results[0]?.formatted_address;
+            setCurrentAddress(address);
+          }
+        } catch (error) {
+          console.error('Error getting address:', error);
         }
-      } catch (error) {
-        console.error('Error getting address:', error);
-      }
-    };
+      };
 
-    fetchAddress();
+      fetchAddress();
+    }
   }, [userLocation]);
 
   // todo: Loading State
@@ -135,7 +140,8 @@ const Home = () => {
             <TextInput
               placeholder="Current Location"
               value={currentAddress}
-              onChangeText={e => setCurrentAddress(e)}
+              // onChangeText={e => setCurrentAddress(e)}
+              style={{flex: 1}}
             />
           </View>
         </View>
