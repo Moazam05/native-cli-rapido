@@ -21,6 +21,7 @@ const Home = ({navigation, route}) => {
   const mapRef = useRef();
   const destination = route?.params?.details?.geometry?.location || {};
   const formatAddress = route?.params?.details?.formatted_address || '';
+  const distanceInKm = route?.params?.distanceInKm || 0;
   const {lat, lng} = destination;
 
   const [userLocation, setUserLocation] = useState(null);
@@ -220,9 +221,17 @@ const Home = ({navigation, route}) => {
             style={{
               flex: 1,
             }}>
-            <RideOption iconName="bicycle" label="Bike" />
-            <RideOption iconName="car-sport-outline" label="Car" />
-            <RideOption iconName="car" label="Auto" />
+            <RideOption
+              iconName="bicycle"
+              label="Bike"
+              distance={distanceInKm}
+            />
+            <RideOption
+              iconName="car-sport-outline"
+              label="Car"
+              distance={distanceInKm}
+            />
+            <RideOption iconName="car" label="Auto" distance={distanceInKm} />
           </View>
         </View>
       </View>

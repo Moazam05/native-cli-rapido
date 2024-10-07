@@ -28,7 +28,7 @@ const Destination = ({navigation, route}) => {
         position: 'bottom',
       });
     } else {
-      navigation.navigate('Home', {details});
+      navigation.navigate('Home', {details, distanceInKm});
     }
   };
 
