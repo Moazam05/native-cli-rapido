@@ -6,6 +6,7 @@ import {GOOGLE_MAPS_API_KEY} from '@env';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {Fonts} from '../../../constants/fonts';
 import {getDistance} from 'geolib';
+import Toast from 'react-native-toast-message';
 
 const Destination = ({navigation, route}) => {
   const userLocation = route?.params?.userLocation || {};
@@ -20,8 +21,12 @@ const Destination = ({navigation, route}) => {
     const destination = {latitude: lat, longitude: lng};
     const distanceInKm = getDistance(userLocation, destination) / 1000;
 
-    if (distanceInKm >= 10) {
-      Alert.alert('Error', 'Destination is too far');
+    if (distanceInKm >= 50) {
+      Toast.show({
+        type: 'error',
+        text1: 'Destination is too far',
+        position: 'bottom',
+      });
     } else {
       navigation.navigate('Home', {details});
     }
