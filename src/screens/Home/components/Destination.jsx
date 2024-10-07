@@ -1,23 +1,33 @@
 import React from 'react';
-import {View, StyleSheet} from 'react-native';
+import {View, Text, StyleSheet} from 'react-native';
 import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
+import {themeColors} from '../../../constants/colors';
 import {GOOGLE_MAPS_API_KEY} from '@env';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import {Fonts} from '../../../constants/fonts';
 
 const Destination = () => {
   return (
-    <View style={styles.googlePlacesContainer}>
-      <GooglePlacesAutocomplete
-        placeholder="Search"
-        onPress={(data, details = null) => {
-          console.log(data, details);
-        }}
-        query={{
-          key: GOOGLE_MAPS_API_KEY,
-          language: 'en',
-        }}
-        styles={styles.googlePlaces}
-        onFail={error => console.error('Google Places Error:', error)}
-      />
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <Ionicons name="chevron-back" size={25} color={themeColors.BLACK} />
+        <Text style={styles.title}>Select Destination</Text>
+      </View>
+
+      <View style={styles.googlePlacesContainer}>
+        <GooglePlacesAutocomplete
+          placeholder="Search"
+          onPress={(data, details = null) => {
+            console.log(data, details);
+          }}
+          query={{
+            key: GOOGLE_MAPS_API_KEY,
+            language: 'en',
+          }}
+          styles={styles.googlePlaces}
+          onFail={error => console.error('Google Places Error:', error)}
+        />
+      </View>
     </View>
   );
 };
@@ -25,19 +35,24 @@ const Destination = () => {
 export default Destination;
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: themeColors.WHITE,
+    paddingHorizontal: 15,
+    paddingVertical: 20,
+  },
   googlePlacesContainer: {
     flex: 1,
-    padding: 10,
+    marginTop: 20,
   },
   googlePlaces: {
     container: {
-      backgroundColor: 'white',
-      borderWidth: 1,
+      backgroundColor: themeColors.WHITE,
       borderColor: '#d3d3d3',
       borderRadius: 5,
     },
     textInputContainer: {
-      backgroundColor: 'white',
+      backgroundColor: themeColors.WHITE,
       borderRadius: 5,
       padding: 10,
     },
@@ -45,7 +60,7 @@ const styles = StyleSheet.create({
       height: 40,
       margin: 0,
       padding: 0,
-      backgroundColor: 'white',
+      backgroundColor: themeColors.WHITE,
       borderColor: '#d3d3d3',
       borderWidth: 1,
       borderRadius: 5,
@@ -53,5 +68,16 @@ const styles = StyleSheet.create({
     predefinedPlacesDescription: {
       color: '#1faadb',
     },
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: Fonts.SEMIBOLD,
+    color: themeColors.BLACK,
+    textAlign: 'center',
+    flex: 1,
   },
 });
