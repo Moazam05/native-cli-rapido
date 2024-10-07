@@ -196,8 +196,7 @@ const Home = ({navigation, route}) => {
             <TextInput
               placeholder="Current Location"
               value={currentAddress}
-              // onChangeText={e => setCurrentAddress(e)}
-              style={{flex: 1}}
+              style={styles.inputStyle}
             />
           </View>
         </View>
@@ -213,14 +212,11 @@ const Home = ({navigation, route}) => {
               value={formatAddress}
               placeholder="Where are you going ?"
               editable={false}
-              style={{flex: 1, color: themeColors.BLACK}}
+              style={styles.destinationInput}
             />
           </TouchableOpacity>
 
-          <View
-            style={{
-              flex: 1,
-            }}>
+          <View style={styles.inputStyle}>
             <RideOption
               iconName="bicycle"
               label="Bike"
@@ -251,6 +247,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: themeColors.WHITE,
+  },
+  inputStyle: {
+    flex: 1,
+  },
+  destinationInput: {
+    backgroundColor: themeColors.WHITE,
+    flex: 1,
   },
   mapContainer: {
     flex: 0.7,

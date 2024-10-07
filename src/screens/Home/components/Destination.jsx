@@ -1,12 +1,12 @@
-import React from 'react';
-import {View, Text, StyleSheet, TouchableOpacity, Alert} from 'react-native';
-import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
-import {themeColors} from '../../../constants/colors';
 import {GOOGLE_MAPS_API_KEY} from '@env';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import {Fonts} from '../../../constants/fonts';
 import {getDistance} from 'geolib';
+import React from 'react';
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
 import Toast from 'react-native-toast-message';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import {themeColors} from '../../../constants/colors';
+import {Fonts} from '../../../constants/fonts';
 
 const Destination = ({navigation, route}) => {
   const userLocation = route?.params?.userLocation || {};
