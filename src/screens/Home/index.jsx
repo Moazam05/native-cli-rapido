@@ -26,13 +26,35 @@ const Home = () => {
           </View>
 
           <View style={styles.searchBar}>
-            <FontAwesome name="circle-o" size={17} color={themeColors.GRAY} />
+            <FontAwesome name="circle-o" size={17} color={themeColors.GREEN} />
             <TextInput value="" placeholder="Current Location" />
           </View>
         </View>
       </View>
 
-      <View style={styles.bottomContainer} />
+      <View style={styles.bottomContainer}>
+        <View
+          style={{
+            backgroundColor: '#E7E7E7',
+            height: '100%',
+            borderRadius: 20,
+          }}>
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              backgroundColor: themeColors.WHITE,
+              marginHorizontal: 15,
+              marginVertical: 15,
+              paddingHorizontal: 15,
+              borderRadius: 25,
+              gap: 10,
+            }}>
+            <Ionicons name="search" size={19} color={themeColors.BLACK} />
+            <TextInput value="" placeholder="Where are you going s?" />
+          </View>
+        </View>
+      </View>
     </View>
   );
 };
@@ -86,5 +108,7 @@ const styles = StyleSheet.create({
   },
   bottomContainer: {
     flex: 0.3,
+    paddingHorizontal: 15,
+    paddingVertical: 20,
   },
 });
