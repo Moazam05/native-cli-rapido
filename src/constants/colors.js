@@ -1,10 +1,10 @@
 export const themeColors = {
   WHITE: '#fff',
+  BLACK: '#000',
+  GRAY: '#878787',
 
   // OLD
   PRIMARY: '#FE8C00',
-  GRAY: '#878787',
-  BLACK: '#101010',
   ERROR: '#F14141',
   PRIMARY_BG: '#F9F9F9',
   DOT: '#D1D3D8',
