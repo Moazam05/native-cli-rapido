@@ -1,14 +1,7 @@
 import React, {useEffect, useState} from 'react';
-import {
-  ActivityIndicator,
-  AppState,
-  Button,
-  Linking,
-  Platform,
-  Text,
-  View,
-} from 'react-native';
+import {AppState, View} from 'react-native';
 import GetLocation from 'react-native-get-location';
+import GPSModal from './components/GPSModal';
 
 const LocationService = () => {
   const [locationEnabled, setLocationEnabled] = useState(false); // Whether location services are enabled
@@ -18,15 +11,22 @@ const LocationService = () => {
     longitude: 0,
   });
   const [loading, setLoading] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
 
-  console.log('locationEnabled', locationEnabled);
+  useEffect(() => {
+    if (locationEnabled) {
+      setModalVisible(false);
+    } else {
+      setModalVisible(true);
+    }
+  }, [locationEnabled]);
 
-  // Check location services when app starts
+  // todo: Check location services
   useEffect(() => {
     checkLocationServices();
   }, []);
 
-  // Listen to app state changes (foreground/background)
+  // todo: Listen to app state changes (foreground/background)
   useEffect(() => {
     const appStateListener = AppState.addEventListener(
       'change',
@@ -34,7 +34,7 @@ const LocationService = () => {
         console.log('App state:', nextAppState);
         setAppState(nextAppState);
         if (nextAppState === 'active') {
-          checkLocationServices(); // Recheck location services when the app comes to the foreground
+          checkLocationServices(); // todo
         }
       },
     );
@@ -44,9 +44,8 @@ const LocationService = () => {
     };
   }, []);
 
-  // Function to check if location services are enabled
+  // todo: Get Location Coordinates
   const checkLocationServices = async () => {
-    console.log('Checking location services...');
     setLoading(true);
 
     try {
@@ -55,10 +54,11 @@ const LocationService = () => {
         timeout: 10000,
         maximumAge: 0,
       });
-      console.log('Location:', location);
+
       if (location) {
         setLocationEnabled(true);
         setLoading(false);
+        setModalVisible(false);
 
         setUserLocation({
           latitude: location.latitude,
@@ -67,36 +67,13 @@ const LocationService = () => {
       }
     } catch (error) {
       setLoading(false);
-      //   console.error('Error getting location:', error);
-    }
-  };
-
-  // Open GPS settings (Android-specific)
-  const openGPSSettings = async () => {
-    if (Platform.OS === 'android') {
-      const url = 'android.settings.LOCATION_SOURCE_SETTINGS';
-      await Linking.sendIntent(url);
     }
   };
 
   return (
-    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-      {loading ? (
-        <ActivityIndicator size="large" color="#0000ff" />
-      ) : (
-        <>
-          <Text>
-            Location services are{' '}
-            {locationEnabled ? 'enabled' : 'disabled. Please enable GPS.'}
-          </Text>
-          {!locationEnabled && (
-            <Button
-              title="Enable Location Services"
-              onPress={openGPSSettings}
-            />
-          )}
-        </>
-      )}
+    <View>
+      {/* Modal */}
+      <GPSModal visible={modalVisible} loading={loading} />
     </View>
   );
 };

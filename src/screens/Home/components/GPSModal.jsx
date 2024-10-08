@@ -1,10 +1,19 @@
-import {View, Text, Button, Platform, Linking, BackHandler} from 'react-native';
+import {
+  View,
+  Text,
+  Button,
+  Platform,
+  Linking,
+  BackHandler,
+  ActivityIndicator,
+} from 'react-native';
 import React from 'react';
 import CustomModal from '../../../components/CustomModal';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 import {StyleSheet} from 'react-native';
 
-const GPSModal = ({visible, setVisible}) => {
+const GPSModal = ({visible, loading}) => {
+  // todo: Open GPS settings (Android-specific)
   const openGPSSettings = async () => {
     if (Platform.OS === 'android') {
       const url = 'android.settings.LOCATION_SOURCE_SETTINGS';
@@ -29,21 +38,24 @@ const GPSModal = ({visible, setVisible}) => {
               title="Cancel"
               color=""
               onPress={() => {
-                setVisible(false);
                 BackHandler.exitApp();
               }}
+              disabled={loading}
             />
           </View>
 
           <View style={styles.button}>
-            <Button
-              title="Enable GPS"
-              color="#F6C41F"
-              onPress={openGPSSettings}
-              style={{
-                textTransform: 'capitalize',
-              }}
-            />
+            {loading ? (
+              <View style={styles.loader}>
+                <ActivityIndicator size="small" color="#F6C41F" />
+              </View>
+            ) : (
+              <Button
+                title="Enable GPS"
+                color="#F6C41F"
+                onPress={openGPSSettings}
+              />
+            )}
           </View>
         </View>
       </View>
@@ -80,5 +92,15 @@ const styles = StyleSheet.create({
   },
   button: {
     width: '50%',
+  },
+  loader: {
+    borderWidth: 1,
+    borderColor: '#F6C41F',
+    borderRadius: 5,
+    padding: 5,
+    height: 35,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
