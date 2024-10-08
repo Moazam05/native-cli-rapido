@@ -1,5 +1,13 @@
 import React, {useEffect, useState} from 'react';
-import {AppState, Button, Linking, Platform, Text, View} from 'react-native';
+import {
+  ActivityIndicator,
+  AppState,
+  Button,
+  Linking,
+  Platform,
+  Text,
+  View,
+} from 'react-native';
 import GetLocation from 'react-native-get-location';
 
 const LocationService = () => {
@@ -9,6 +17,7 @@ const LocationService = () => {
     latitude: 0,
     longitude: 0,
   });
+  const [loading, setLoading] = useState(false);
 
   console.log('locationEnabled', locationEnabled);
 
@@ -38,6 +47,7 @@ const LocationService = () => {
   // Function to check if location services are enabled
   const checkLocationServices = async () => {
     console.log('Checking location services...');
+    setLoading(true);
 
     try {
       const location = await GetLocation.getCurrentPosition({
@@ -48,6 +58,7 @@ const LocationService = () => {
       console.log('Location:', location);
       if (location) {
         setLocationEnabled(true);
+        setLoading(false);
 
         setUserLocation({
           latitude: location.latitude,
@@ -55,6 +66,7 @@ const LocationService = () => {
         });
       }
     } catch (error) {
+      setLoading(false);
       //   console.error('Error getting location:', error);
     }
   };
@@ -69,16 +81,21 @@ const LocationService = () => {
 
   return (
     <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-      {/* Show appropriate message based on location services status */}
-      <Text>
-        {locationEnabled
-          ? 'Location services are enabled.'
-          : 'Location services are disabled. Please enable GPS.'}
-      </Text>
-
-      {/* Show button if location services are disabled */}
-      {!locationEnabled && (
-        <Button title="Enable Location Services" onPress={openGPSSettings} />
+      {loading ? (
+        <ActivityIndicator size="large" color="#0000ff" />
+      ) : (
+        <>
+          <Text>
+            Location services are{' '}
+            {locationEnabled ? 'enabled' : 'disabled. Please enable GPS.'}
+          </Text>
+          {!locationEnabled && (
+            <Button
+              title="Enable Location Services"
+              onPress={openGPSSettings}
+            />
+          )}
+        </>
       )}
     </View>
   );
