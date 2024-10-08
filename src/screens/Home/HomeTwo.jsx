@@ -1,13 +1,15 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, Button, Platform, Alert} from 'react-native';
+import {View, Text, Button, Alert, Platform, Linking} from 'react-native';
 import GetLocation from 'react-native-get-location';
 import {request, PERMISSIONS, RESULTS} from 'react-native-permissions';
 
 const HomeTwo = () => {
   const [location, setLocation] = useState(null);
+  const [gpsEnabled, setGpsEnabled] = useState(null);
 
   useEffect(() => {
     requestLocationPermission();
+    checkGPSEnabledStatus();
   }, []);
 
   const requestLocationPermission = async () => {
@@ -19,7 +21,18 @@ const HomeTwo = () => {
 
   const handlePermission = granted => {
     if (granted === RESULTS.GRANTED) {
-      getLocation();
+      if (gpsEnabled) {
+        GetLocation.getCurrentPosition({
+          enableHighAccuracy: true,
+          timeout: 15000,
+        })
+          .then(location => {
+            setLocation(location);
+          })
+          .catch(error => {
+            handleLocationError(error.code);
+          });
+      }
     } else {
       Alert.alert(
         'Permission Denied',
@@ -28,32 +41,63 @@ const HomeTwo = () => {
     }
   };
 
-  const getLocation = async () => {
-    GetLocation.getCurrentPosition({
+  const checkGPSEnabledStatus = async () => {
+    GetLocation.getServiceStatus({
       enableHighAccuracy: true,
       timeout: 15000,
     })
-      .then(location => {
-        setLocation(location);
+      .then(status => {
+        setGpsEnabled(status);
+        if (status) {
+          GetLocation.getCurrentPosition({
+            enableHighAccuracy: true,
+            timeout: 15000,
+          })
+            .then(location => {
+              setLocation(location);
+            })
+            .catch(error => {
+              handleLocationError(error.code);
+            });
+        }
       })
       .catch(error => {
-        const {code, message} = error;
-        handleLocationError(code, message);
+        handleLocationError(error.code);
       });
   };
 
-  const handleLocationError = (code, message) => {
-    if (code === 'UNAVAILABLE') {
-      Alert.alert(
-        'Location Error',
-        'Location service is disabled or unavailable.',
-      );
-    } else if (code === 'TIMEOUT') {
+  const promptToEnableGPS = () => {
+    Alert.alert(
+      'GPS Disabled',
+      'Your GPS is turned off. Do you want to enable it?',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'OK',
+          onPress: () => openGPSSettings(),
+        },
+      ],
+      {cancelable: false},
+    );
+  };
+
+  const openGPSSettings = async () => {
+    if (Platform.OS === 'android') {
+      const url = 'android.settings.LOCATION_SOURCE_SETTINGS';
+      await Linking.sendIntent(url);
+    }
+  };
+
+  const handleLocationError = code => {
+    if (code === 'TIMEOUT') {
       Alert.alert('Location Timeout', 'The request timed out. Try again.');
     } else if (code === 'UNAUTHORIZED') {
       Alert.alert('Permission Error', 'Location permission is not granted.');
     } else {
-      Alert.alert('Error', message);
+      Alert.alert('Error', 'An error occurred while fetching location.');
     }
   };
 
@@ -67,7 +111,10 @@ const HomeTwo = () => {
       ) : (
         <Text>Fetching location...</Text>
       )}
-      <Button title="Get Location" onPress={getLocation} />
+      {gpsEnabled ? null : (
+        <Button title="Enable GPS" onPress={promptToEnableGPS} />
+      )}
+      <Button title="Get Location" onPress={checkGPSEnabledStatus} />
     </View>
   );
 };
