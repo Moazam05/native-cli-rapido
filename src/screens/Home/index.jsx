@@ -24,12 +24,44 @@ const Home = ({navigation, route}) => {
   const distanceInKm = route?.params?.distanceInKm || 0;
   const {lat, lng} = destination;
 
-  const [userLocation, setUserLocation] = useState(null);
+  const [userLocation, setUserLocation] = useState({
+    latitude: 37.78825,
+    longitude: -122.4324,
+  });
   const [locationPermission, setLocationPermission] = useState(null);
   const [currentAddress, setCurrentAddress] = useState('');
 
+  console.log('locationPermission:', locationPermission);
+
+  const getLocation = async () => {
+    if (locationPermission === 'granted') {
+      try {
+        const location = await GetLocation.getCurrentPosition({
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 0,
+        });
+        setUserLocation({
+          latitude: location.latitude,
+          longitude: location.longitude,
+        });
+
+        if (mapRef) {
+          mapRef.current.animateToRegion({
+            latitude: location.latitude,
+            longitude: location.longitude,
+            latitudeDelta: 0.015,
+            longitudeDelta: 0.015,
+          });
+        }
+      } catch (error) {
+        console.error('Error getting location:', error);
+      }
+    }
+  };
+
   useEffect(() => {
-    const checkLocationPermission = async () => {
+    const requestPermission = async () => {
       const fineLocation = await check(
         PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
       );
@@ -49,42 +81,20 @@ const Home = ({navigation, route}) => {
         setLocationPermission('granted');
       } else {
         setLocationPermission(fineLocation);
+        // default location
+        setUserLocation({
+          latitude: 37.78825,
+          longitude: -122.4324,
+        });
       }
-    };
 
-    checkLocationPermission();
-  }, []);
-
-  useEffect(() => {
-    const getLocation = async () => {
       if (locationPermission === 'granted') {
-        try {
-          const location = await GetLocation.getCurrentPosition({
-            enableHighAccuracy: true,
-            timeout: 10000,
-            maximumAge: 0,
-          });
-          setUserLocation({
-            latitude: location.latitude,
-            longitude: location.longitude,
-          });
-
-          if (mapRef) {
-            mapRef.current.animateToRegion({
-              latitude: location.latitude,
-              longitude: location.longitude,
-              latitudeDelta: 0.015,
-              longitudeDelta: 0.015,
-            });
-          }
-        } catch (error) {
-          console.error('Error getting location:', error);
-        }
+        getLocation();
       }
     };
 
-    getLocation();
-  }, [locationPermission]);
+    requestPermission();
+  }, []);
 
   useEffect(() => {
     if (userLocation) {
@@ -125,6 +135,8 @@ const Home = ({navigation, route}) => {
     }
   }, [lat, lng, currentAddress]);
 
+  console.log('userLocation:', userLocation);
+
   // todo: Loading State
   if (!userLocation) {
     return (
@@ -142,7 +154,7 @@ const Home = ({navigation, route}) => {
           style={styles.map}
           provider={PROVIDER_GOOGLE}
           showsUserLocation={false}
-          showsMyLocationButtons={false}
+          showsMyLocationButton={false}
           initialRegion={{
             latitude: userLocation?.latitude,
             longitude: userLocation?.longitude,
