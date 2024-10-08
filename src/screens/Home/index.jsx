@@ -1,5 +1,6 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {
+  AppState,
   Image,
   StyleSheet,
   TextInput,
@@ -8,7 +9,6 @@ import {
 } from 'react-native';
 import GetLocation from 'react-native-get-location';
 import MapView, {Marker, PROVIDER_GOOGLE, Polyline} from 'react-native-maps';
-import {check, PERMISSIONS, request} from 'react-native-permissions';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {SplashLogo} from '../../assets/images';
@@ -16,6 +16,7 @@ import {themeColors} from '../../constants/colors';
 import axios from 'axios';
 import {GOOGLE_MAPS_API_KEY} from '@env';
 import RideOption from './components/RideOption';
+import GPSModal from './components/GPSModal';
 
 const Home = ({navigation, route}) => {
   const mapRef = useRef();
@@ -24,85 +25,80 @@ const Home = ({navigation, route}) => {
   const distanceInKm = route?.params?.distanceInKm || 0;
   const {lat, lng} = destination;
 
-  const [userLocation, setUserLocation] = useState(null);
-  const [locationPermission, setLocationPermission] = useState(null);
+  const [locationEnabled, setLocationEnabled] = useState(false);
+  const [userLocation, setUserLocation] = useState({
+    latitude: 0,
+    longitude: 0,
+  });
+  const [loading, setLoading] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
   const [currentAddress, setCurrentAddress] = useState('');
 
-  console.log('locationPermission:', locationPermission);
+  // todo: Modal Visibility
+  useEffect(() => {
+    if (locationEnabled) {
+      setModalVisible(false);
+    } else {
+      setModalVisible(true);
+    }
+  }, [locationEnabled]);
 
-  const getLocation = async () => {
-    if (locationPermission === 'granted') {
-      try {
-        const location = await GetLocation.getCurrentPosition({
-          enableHighAccuracy: true,
-          timeout: 10000,
-          maximumAge: 0,
-        });
+  // todo: Check location services
+  useEffect(() => {
+    checkLocationServices();
+  }, []);
+
+  // todo: Listen to app state changes (foreground/background) ***IMPORTANT***
+  useEffect(() => {
+    const appStateListener = AppState.addEventListener(
+      'change',
+      nextAppState => {
+        console.log('App state:', nextAppState);
+        if (nextAppState === 'active') {
+          checkLocationServices(); // todo
+        }
+      },
+    );
+
+    return () => {
+      appStateListener.remove();
+    };
+  }, []);
+
+  // todo: Get Location Coordinates
+  const checkLocationServices = async () => {
+    setLoading(true);
+
+    try {
+      const location = await GetLocation.getCurrentPosition({
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0,
+      });
+
+      if (location) {
+        setLocationEnabled(true);
+        setLoading(false);
+        setModalVisible(false);
+
         setUserLocation({
           latitude: location.latitude,
           longitude: location.longitude,
         });
-
-        if (mapRef) {
-          mapRef.current.animateToRegion({
-            latitude: location.latitude,
-            longitude: location.longitude,
-            latitudeDelta: 0.015,
-            longitudeDelta: 0.015,
-          });
-        }
-      } catch (error) {
-        console.error('Error getting location:', error);
       }
+
+      if (mapRef) {
+        mapRef.current.animateToRegion({
+          latitude: location.latitude,
+          longitude: location.longitude,
+          latitudeDelta: 0.015,
+          longitudeDelta: 0.015,
+        });
+      }
+    } catch (error) {
+      setLoading(false);
     }
   };
-
-  useEffect(() => {
-    const requestPermission = async () => {
-      const fineLocation = await check(
-        PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
-      );
-      const coarseLocation = await check(
-        PERMISSIONS.ANDROID.ACCESS_COARSE_LOCATION,
-      );
-
-      if (
-        fineLocation === 'undetermined' ||
-        coarseLocation === 'undetermined'
-      ) {
-        const requestedPermission = await request(
-          PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
-        );
-        setLocationPermission(requestedPermission);
-      } else if (fineLocation === 'granted' || coarseLocation === 'granted') {
-        setLocationPermission('granted');
-      } else {
-        setLocationPermission(fineLocation);
-      }
-
-      if (locationPermission === 'granted') {
-        await getLocation();
-      }
-    };
-
-    requestPermission();
-  }, []);
-
-  useEffect(() => {
-    if (locationPermission === 'denied') {
-      const timeoutId = setTimeout(async () => {
-        const requestedPermission = await request(
-          PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
-        );
-        setLocationPermission(requestedPermission);
-        if (requestedPermission === 'granted') {
-          await getLocation();
-        }
-      }, 5000);
-
-      return () => clearTimeout(timeoutId);
-    }
-  }, [locationPermission]);
 
   useEffect(() => {
     if (userLocation) {
@@ -141,8 +137,6 @@ const Home = ({navigation, route}) => {
       });
     }
   }, [lat, lng, currentAddress]);
-
-  console.log('userLocation:', userLocation);
 
   // todo: Loading State
   if (!userLocation) {
@@ -250,6 +244,9 @@ const Home = ({navigation, route}) => {
           </View>
         </View>
       </View>
+
+      {/* Modal */}
+      <GPSModal visible={modalVisible} loading={loading} />
     </View>
   );
 };

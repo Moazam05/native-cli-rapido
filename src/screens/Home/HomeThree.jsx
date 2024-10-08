@@ -4,7 +4,7 @@ import GetLocation from 'react-native-get-location';
 import GPSModal from './components/GPSModal';
 
 const LocationService = () => {
-  const [locationEnabled, setLocationEnabled] = useState(false); // Whether location services are enabled
+  const [locationEnabled, setLocationEnabled] = useState(false);
   const [userLocation, setUserLocation] = useState({
     latitude: 0,
     longitude: 0,
