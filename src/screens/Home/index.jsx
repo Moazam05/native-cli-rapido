@@ -24,10 +24,7 @@ const Home = ({navigation, route}) => {
   const distanceInKm = route?.params?.distanceInKm || 0;
   const {lat, lng} = destination;
 
-  const [userLocation, setUserLocation] = useState({
-    latitude: 37.78825,
-    longitude: -122.4324,
-  });
+  const [userLocation, setUserLocation] = useState(null);
   const [locationPermission, setLocationPermission] = useState(null);
   const [currentAddress, setCurrentAddress] = useState('');
 
@@ -81,15 +78,10 @@ const Home = ({navigation, route}) => {
         setLocationPermission('granted');
       } else {
         setLocationPermission(fineLocation);
-        // default location
-        setUserLocation({
-          latitude: 37.78825,
-          longitude: -122.4324,
-        });
       }
 
       if (locationPermission === 'granted') {
-        getLocation();
+        await getLocation();
       }
     };
 
@@ -97,12 +89,27 @@ const Home = ({navigation, route}) => {
   }, []);
 
   useEffect(() => {
+    if (locationPermission === 'denied') {
+      const timeoutId = setTimeout(async () => {
+        const requestedPermission = await request(
+          PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
+        );
+        setLocationPermission(requestedPermission);
+        if (requestedPermission === 'granted') {
+          await getLocation();
+        }
+      }, 5000);
+
+      return () => clearTimeout(timeoutId);
+    }
+  }, [locationPermission]);
+
+  useEffect(() => {
     if (userLocation) {
       const fetchAddress = async () => {
         try {
           const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${userLocation.latitude},${userLocation.longitude}&key=${GOOGLE_MAPS_API_KEY}`;
           const response = await axios.get(url);
-          // console.log(response.data.results[0]?.formatted_address);
           if (response) {
             const address = response.data.results[0]?.formatted_address;
             setCurrentAddress(address);
@@ -120,8 +127,8 @@ const Home = ({navigation, route}) => {
     if ((lat, lng)) {
       const coordinates = [
         {
-          latitude: userLocation.latitude,
-          longitude: userLocation.longitude,
+          latitude: userLocation?.latitude,
+          longitude: userLocation?.longitude,
         },
         {
           latitude: lat,
