@@ -1,11 +1,10 @@
 import React, {useEffect, useState} from 'react';
-import {AppState, View} from 'react-native';
+import {AppState, Text, View} from 'react-native';
 import GetLocation from 'react-native-get-location';
 import GPSModal from './components/GPSModal';
 
 const LocationService = () => {
   const [locationEnabled, setLocationEnabled] = useState(false); // Whether location services are enabled
-  const [appState, setAppState] = useState(AppState.currentState); // App state to detect when returning from GPS settings
   const [userLocation, setUserLocation] = useState({
     latitude: 0,
     longitude: 0,
@@ -32,7 +31,6 @@ const LocationService = () => {
       'change',
       nextAppState => {
         console.log('App state:', nextAppState);
-        setAppState(nextAppState);
         if (nextAppState === 'active') {
           checkLocationServices(); // todo
         }
@@ -72,6 +70,7 @@ const LocationService = () => {
 
   return (
     <View>
+      <Text>Location Service</Text>
       {/* Modal */}
       <GPSModal visible={modalVisible} loading={loading} />
     </View>
