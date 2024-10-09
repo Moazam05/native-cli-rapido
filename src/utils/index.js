@@ -4,26 +4,34 @@ export const thousandSeparator = price => {
   return price?.toString()?.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 };
 
+const RADIUS_OF_EARTH_KM = 6371; // Earth's radius in kilometers
+
 export function generateCaptainData(userLocation, count = 5) {
   if (userLocation) {
     const captains = [];
+
     for (let i = 0; i < count; i++) {
+      // Generate a random distance within the 2 km radius
+      const distance = Math.random() * 3; // Random distance from 0 to 2 km
+
+      // Generate a random angle (direction) for the point
+      const angle = Math.random() * 3 * Math.PI;
+
+      // Convert the distance to latitude/longitude offsets
+      const deltaLatitude = (distance / RADIUS_OF_EARTH_KM) * (180 / Math.PI);
+      const deltaLongitude =
+        (distance /
+          (RADIUS_OF_EARTH_KM *
+            Math.cos((userLocation.latitude * Math.PI) / 180))) *
+        (180 / Math.PI);
+
       const latitude = parseFloat(
-        faker.number
-          .float({
-            min: userLocation.latitude - 0.1,
-            max: userLocation.latitude + 0.1,
-          })
-          .toFixed(6),
+        (userLocation.latitude + deltaLatitude * Math.sin(angle)).toFixed(6),
       );
       const longitude = parseFloat(
-        faker.number
-          .float({
-            min: userLocation.longitude - 0.1,
-            max: userLocation.longitude + 0.1,
-          })
-          .toFixed(6),
+        (userLocation.longitude + deltaLongitude * Math.cos(angle)).toFixed(6),
       );
+
       captains.push({
         id: i + 1,
         lat: latitude,
@@ -33,6 +41,7 @@ export function generateCaptainData(userLocation, count = 5) {
         image: faker.image.avatar(),
       });
     }
+
     return captains;
   }
 }
