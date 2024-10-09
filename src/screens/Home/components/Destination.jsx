@@ -34,11 +34,20 @@ const Destination = ({navigation, route}) => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
+      {/* <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Ionicons name="chevron-back" size={25} color={themeColors.BLACK} />
         </TouchableOpacity>
-        <Text style={styles.title}>Select Destination</Text>
+        <Text style={styles.title}>Enter Route</Text>
+      </View> */}
+
+      {/* Top Bar */}
+      <View style={styles.topBar}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Ionicons name="chevron-back" size={25} color={themeColors.BLACK} />
+        </TouchableOpacity>
+        <Text style={styles.title}>Enter Route</Text>
+        <Text style={styles.h}>Hide</Text>
       </View>
 
       <View style={styles.googlePlacesContainer}>
@@ -75,6 +84,21 @@ const styles = StyleSheet.create({
     flex: 1,
     marginTop: 30,
   },
+  topBar: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+
+  title: {
+    fontSize: 16,
+    fontFamily: Fonts.SEMIBOLD,
+    color: themeColors.BLACK,
+  },
+  h: {
+    opacity: 0,
+  },
+
   googlePlaces: {
     container: {
       backgroundColor: themeColors.WHITE,

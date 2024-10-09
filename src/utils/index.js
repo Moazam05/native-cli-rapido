@@ -29,6 +29,8 @@ export function generateCaptainData(userLocation, count = 5) {
         lat: latitude,
         long: longitude,
         name: faker.person.fullName(),
+        phone: faker.phone.imei(),
+        image: faker.image.avatar(),
       });
     }
     return captains;

@@ -300,7 +300,7 @@ const Home = ({navigation, route}) => {
             )}
           />
 
-          {/*  */}
+          {/* Current Location */}
           <View style={styles.searchBar}>
             <FontAwesome5
               name="dot-circle"
@@ -312,7 +312,8 @@ const Home = ({navigation, route}) => {
               value={currentAddress}
               style={styles.inputStyle}
               multiline={true}
-              // editable={false}
+              editable={false}
+              selectTextOnFocus={false}
             />
           </View>
 
@@ -321,10 +322,16 @@ const Home = ({navigation, route}) => {
             style={[styles.searchBar, styles.bottomSearchBar]}
             onPress={() => navigation.navigate('Destination', {userLocation})}>
             <Ionicons name="search" size={17} color={themeColors.GREEN} />
+
             <TextInput
               value={formatAddress}
               placeholder="Where are you going ?"
               editable={false}
+              selectTextOnFocus={false}
+              onFocus={() => navigation.navigate('Destination', {userLocation})}
+              style={{
+                color: '#000',
+              }}
             />
           </TouchableOpacity>
         </View>
@@ -396,7 +403,7 @@ const styles = StyleSheet.create({
   },
   searchBar: {
     borderRadius: 8,
-    paddingHorizontal: 15,
+    paddingHorizontal: 12,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 5,
@@ -404,11 +411,13 @@ const styles = StyleSheet.create({
   },
   bottomSearchBar: {
     backgroundColor: themeColors.PRIMARY_BG,
+    paddingHorizontal: 15,
   },
   inputStyle: {
     flex: 1,
     fontSize: 14,
     overflow: 'hidden',
+    color: themeColors.BLACK,
   },
   bottomContainer: {
     flex: 0.4,
