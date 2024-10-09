@@ -38,7 +38,7 @@ const Home = ({navigation, route}) => {
   const [currentAddress, setCurrentAddress] = useState('');
   const [riderDetails, setRiderDetails] = useState(null);
   const [selectedVehicle, setSelectedVehicle] = useState('1');
-  const [captainData, setCaptainData] = useState([]);
+  // const [captainData, setCaptainData] = useState([]);
 
   const RidersData = [
     {
@@ -117,7 +117,7 @@ const Home = ({navigation, route}) => {
 
         const captains = generateCaptainData(newUserLocation);
         // console.log('Captains generated:', captains);
-        setCaptainData(captains);
+        // setCaptainData(captains);
 
         if (mapRef.current && captains.length > 0) {
           const coordinates = [
@@ -178,12 +178,16 @@ const Home = ({navigation, route}) => {
     }
   }, [lat, lng, currentAddress]);
 
+  // todo: Finding nearby riders (captains)
+  const captainData = generateCaptainData(userLocation);
+
   useEffect(() => {
-    if (captainData) {
+    console.log('called');
+    if (selectedVehicle) {
       const closestCaptain = findClosestCaptain(userLocation, captainData);
       setRiderDetails(closestCaptain);
     }
-  }, [lat, lng]);
+  }, [selectedVehicle]);
 
   const handleRider = item => {
     setSelectedVehicle(item.id);
