@@ -112,15 +112,4 @@ const styles = StyleSheet.create({
       color: '#1faadb',
     },
   },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: Fonts.SEMIBOLD,
-    color: themeColors.BLACK,
-    textAlign: 'center',
-    flex: 1,
-  },
 });

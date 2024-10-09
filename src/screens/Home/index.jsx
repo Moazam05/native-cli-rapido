@@ -28,8 +28,6 @@ const Home = ({navigation, route}) => {
   const distanceInKm = route?.params?.distanceInKm || 0;
   const {lat, lng} = destination;
 
-  console.log('destination', destination);
-
   const [locationEnabled, setLocationEnabled] = useState(false);
   const [userLocation, setUserLocation] = useState({
     latitude: 0,
@@ -84,7 +82,7 @@ const Home = ({navigation, route}) => {
     const appStateListener = AppState.addEventListener(
       'change',
       nextAppState => {
-        console.log('App state:', nextAppState);
+        // console.log('App state:', nextAppState);
         if (nextAppState === 'active') {
           checkLocationServices(); // todo
         }
@@ -285,18 +283,12 @@ const Home = ({navigation, route}) => {
                   },
                 ]}
                 onPress={() => handleRider(item)}>
-                <View
-                  style={{
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                  }}>
-                  <View>
-                    <Ionicons
-                      name={item?.iconName}
-                      size={30}
-                      color={themeColors.PRIMARY}
-                    />
-                  </View>
+                <View style={styles.vehicleCard}>
+                  <Ionicons
+                    name={item?.iconName}
+                    size={30}
+                    color={themeColors.PRIMARY}
+                  />
 
                   <Text style={styles.label}>{item?.label}</Text>
                 </View>
@@ -333,9 +325,7 @@ const Home = ({navigation, route}) => {
               editable={false}
               selectTextOnFocus={false}
               onFocus={() => navigation.navigate('Destination', {userLocation})}
-              style={{
-                color: '#000',
-              }}
+              style={styles.whereto}
             />
           </TouchableOpacity>
 
@@ -395,6 +385,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 15,
+  },
+  vehicleCard: {
+    flexDirection: 'column',
+    alignItems: 'center',
+  },
+  whereto: {
+    color: themeColors.BLACK,
   },
   menuButton: {
     backgroundColor: themeColors.WHITE,
