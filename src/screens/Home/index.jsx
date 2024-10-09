@@ -221,6 +221,7 @@ const Home = ({navigation, route}) => {
           {captainData.map(captain => (
             <Marker
               key={captain.id}
+              tracksViewChanges={false}
               coordinate={{
                 latitude: captain.lat,
                 longitude: captain.long,
