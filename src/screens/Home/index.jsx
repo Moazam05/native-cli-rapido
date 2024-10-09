@@ -36,6 +36,27 @@ const Home = ({navigation, route}) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [currentAddress, setCurrentAddress] = useState('');
 
+  const RidersData = [
+    {
+      id: 1,
+      iconName: 'bicycle',
+      label: 'Bike',
+      distance: distanceInKm,
+    },
+    {
+      id: 2,
+      iconName: 'car-sport-outline',
+      label: 'Car',
+      distance: distanceInKm,
+    },
+    {
+      id: 3,
+      iconName: 'car',
+      label: 'Auto',
+      distance: distanceInKm,
+    },
+  ];
+
   // console.log('User Location:', userLocation);
 
   // Finding nearby riders
@@ -261,17 +282,9 @@ const Home = ({navigation, route}) => {
           </TouchableOpacity>
 
           <View style={styles.inputStyle}>
-            <RideOption
-              iconName="bicycle"
-              label="Bike"
-              distance={distanceInKm}
-            />
-            <RideOption
-              iconName="car-sport-outline"
-              label="Car"
-              distance={distanceInKm}
-            />
-            <RideOption iconName="car" label="Auto" distance={distanceInKm} />
+            {RidersData.map(ride => (
+              <RideOption key={ride.id} {...ride} />
+            ))}
           </View>
         </View>
       </View>
