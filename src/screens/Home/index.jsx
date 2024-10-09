@@ -11,7 +11,6 @@ import {
 } from 'react-native';
 import GetLocation from 'react-native-get-location';
 import MapView, {Marker, PROVIDER_GOOGLE, Polyline} from 'react-native-maps';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {RapidoIcon, SplashLogo} from '../../assets/images';
 import {themeColors} from '../../constants/colors';
@@ -29,6 +28,8 @@ const Home = ({navigation, route}) => {
   const distanceInKm = route?.params?.distanceInKm || 0;
   const {lat, lng} = destination;
 
+  console.log('destination', destination);
+
   const [locationEnabled, setLocationEnabled] = useState(false);
   const [userLocation, setUserLocation] = useState({
     latitude: 0,
@@ -39,8 +40,6 @@ const Home = ({navigation, route}) => {
   const [currentAddress, setCurrentAddress] = useState('');
   const [riderDetails, setRiderDetails] = useState(null);
   const [selectedVehicle, setSelectedVehicle] = useState('1');
-
-  console.log('riderDetails', riderDetails);
 
   const RidersData = [
     {
@@ -171,6 +170,19 @@ const Home = ({navigation, route}) => {
     }
   }, [lat, lng, currentAddress]);
 
+  useEffect(() => {
+    if (captainData) {
+      const closestCaptain = findClosestCaptain(userLocation, captainData);
+      setRiderDetails(closestCaptain);
+    }
+  }, [lat, lng]);
+
+  const handleRider = item => {
+    setSelectedVehicle(item.id);
+    const closestCaptain = findClosestCaptain(userLocation, captainData);
+    setRiderDetails(closestCaptain);
+  };
+
   // todo: Loading State
   if (!userLocation) {
     return (
@@ -179,12 +191,6 @@ const Home = ({navigation, route}) => {
       </View>
     );
   }
-
-  const handleRider = item => {
-    setSelectedVehicle(item.id);
-    const closestCaptain = findClosestCaptain(userLocation, captainData);
-    setRiderDetails(closestCaptain);
-  };
 
   return (
     <View style={styles.container}>
@@ -332,6 +338,26 @@ const Home = ({navigation, route}) => {
               }}
             />
           </TouchableOpacity>
+
+          {destination?.lat && (
+            <View style={styles.captainCard}>
+              <Text style={styles.cardTitle}>Captain Details</Text>
+              <View style={styles.cardContent}>
+                <Image
+                  source={{
+                    uri:
+                      riderDetails?.image ||
+                      'https://avatars.githubusercontent.com/u/37184529',
+                  }}
+                  style={styles.captionIcon}
+                />
+                <View style={styles.cardInfo}>
+                  <Text style={styles.cardName}>{riderDetails?.name}</Text>
+                  <Text style={styles.cardPhone}>{riderDetails?.phone}</Text>
+                </View>
+              </View>
+            </View>
+          )}
         </View>
       </View>
 
@@ -356,7 +382,7 @@ const styles = StyleSheet.create({
   },
 
   mapContainer: {
-    flex: 0.6,
+    flex: 0.55,
   },
   map: {
     flex: 1,
@@ -405,7 +431,7 @@ const styles = StyleSheet.create({
     color: themeColors.BLACK,
   },
   bottomContainer: {
-    flex: 0.4,
+    flex: 0.45,
     paddingHorizontal: 15,
     paddingVertical: 20,
   },
@@ -435,5 +461,47 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: Fonts.MEDIUM,
     color: themeColors.BLACK,
+  },
+
+  captainCard: {
+    backgroundColor: themeColors.WHITE,
+    borderRadius: 10,
+    padding: 10,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 5,
+    marginTop: 20,
+  },
+  cardTitle: {
+    fontSize: 16,
+    fontFamily: Fonts.SEMIBOLD,
+    color: themeColors.BLACK,
+    marginBottom: 5,
+  },
+  cardContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  captionIcon: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    marginRight: 10,
+  },
+  cardInfo: {
+    flex: 1,
+  },
+  cardName: {
+    fontSize: 14,
+    fontFamily: Fonts.REGULAR,
+    color: themeColors.BLACK,
+    marginBottom: 5,
+  },
+  cardPhone: {
+    fontSize: 12,
+    fontFamily: Fonts.REGULAR,
+    color: themeColors.GRAY,
   },
 });
