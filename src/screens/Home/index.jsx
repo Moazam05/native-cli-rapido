@@ -35,11 +35,10 @@ const Home = ({navigation, route}) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [currentAddress, setCurrentAddress] = useState('');
 
-  console.log('User Location:', userLocation);
+  // console.log('User Location:', userLocation);
 
   // Finding nearby riders
   const captainData = generateCaptainData(userLocation);
-  console.log('user', captainData);
 
   // todo: Modal Visibility
   useEffect(() => {
@@ -175,6 +174,20 @@ const Home = ({navigation, route}) => {
               longitude: userLocation?.longitude,
             }}
           />
+
+          {/* Nearby Riders */}
+          {userLocation &&
+            captainData &&
+            captainData.map((captain, index) => (
+              <Marker
+                key={index}
+                coordinate={{
+                  latitude: captain?.lat,
+                  longitude: captain?.long,
+                }}>
+                <Ionicons name="car" size={30} color={themeColors.PRIMARY} />
+              </Marker>
+            ))}
 
           {/* Destination Marker */}
           {lat && lng && (
