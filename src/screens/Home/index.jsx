@@ -202,8 +202,8 @@ const Home = ({navigation, route}) => {
           initialRegion={{
             latitude: userLocation?.latitude,
             longitude: userLocation?.longitude,
-            latitudeDelta: 0.0922,
-            longitudeDelta: 0.0421,
+            latitudeDelta: 0.015,
+            longitudeDelta: 0.015,
           }}>
           <Marker
             coordinate={{
