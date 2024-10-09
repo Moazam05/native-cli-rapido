@@ -38,6 +38,7 @@ const Home = ({navigation, route}) => {
   const [currentAddress, setCurrentAddress] = useState('');
   const [riderDetails, setRiderDetails] = useState(null);
   const [selectedVehicle, setSelectedVehicle] = useState('1');
+  const [captainData, setCaptainData] = useState([]);
 
   const RidersData = [
     {
@@ -59,9 +60,6 @@ const Home = ({navigation, route}) => {
       distance: distanceInKm,
     },
   ];
-
-  // todo: Finding nearby riders (captains)
-  const captainData = generateCaptainData(userLocation);
 
   // todo: Modal Visibility
   useEffect(() => {
@@ -106,23 +104,35 @@ const Home = ({navigation, route}) => {
       });
 
       if (location) {
+        const newUserLocation = {
+          latitude: location.latitude,
+          longitude: location.longitude,
+        };
+
         setLocationEnabled(true);
         setLoading(false);
         setModalVisible(false);
 
-        setUserLocation({
-          latitude: location.latitude,
-          longitude: location.longitude,
-        });
-      }
+        setUserLocation(newUserLocation);
 
-      if (mapRef) {
-        mapRef.current.animateToRegion({
-          latitude: location.latitude,
-          longitude: location.longitude,
-          latitudeDelta: 0.015,
-          longitudeDelta: 0.015,
-        });
+        const captains = generateCaptainData(newUserLocation);
+        // console.log('Captains generated:', captains);
+        setCaptainData(captains);
+
+        if (mapRef.current && captains.length > 0) {
+          const coordinates = [
+            newUserLocation,
+            ...captains.map(captain => ({
+              latitude: captain.lat,
+              longitude: captain.long,
+            })),
+          ];
+
+          mapRef.current.fitToCoordinates(coordinates, {
+            edgePadding: {top: 50, right: 50, bottom: 50, left: 50},
+            animated: true,
+          });
+        }
       }
     } catch (error) {
       setLoading(false);
@@ -200,35 +210,24 @@ const Home = ({navigation, route}) => {
           // showsUserLocation={false}
           // showsMyLocationButton={false}
           initialRegion={{
-            latitude: userLocation?.latitude,
-            longitude: userLocation?.longitude,
+            ...userLocation,
             latitudeDelta: 0.015,
             longitudeDelta: 0.015,
           }}>
-          <Marker
-            coordinate={{
-              latitude: userLocation?.latitude,
-              longitude: userLocation?.longitude,
-            }}
-          />
+          <Marker coordinate={userLocation} />
 
           {/* Nearby Riders */}
-          {userLocation &&
-            captainData?.map(captain => (
-              <Marker
-                key={captain.id}
-                enableFlatMode={true}
-                zIndex={0}
-                tracksViewChanges={false}
-                coordinate={{
-                  latitude: captain?.lat,
-                  longitude: captain?.long,
-                }}>
-                <View>
-                  <Image source={RapidoIcon} style={styles.riderIcon} />
-                </View>
-              </Marker>
-            ))}
+          {/* Captain Markers */}
+          {captainData.map(captain => (
+            <Marker
+              key={captain.id}
+              coordinate={{
+                latitude: captain.lat,
+                longitude: captain.long,
+              }}>
+              <Image source={RapidoIcon} style={styles.riderIcon} />
+            </Marker>
+          ))}
 
           {/* Destination Marker */}
           {lat && lng && (
