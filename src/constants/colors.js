@@ -3,9 +3,9 @@ export const themeColors = {
   BLACK: '#000',
   GRAY: '#878787',
   LIGHTGREY: '#C4C4C4',
+  PRIMARY: '#F6C41F',
 
   // OLD
-  PRIMARY: '#FE8C00',
   ERROR: '#F14141',
   GREEN: '#7ab501',
   PRIMARY_BG: '#F9F9F9',

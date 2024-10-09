@@ -1,6 +1,7 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {
   AppState,
+  FlatList,
   Image,
   StyleSheet,
   Text,
@@ -184,8 +185,8 @@ const Home = ({navigation, route}) => {
           ref={mapRef}
           style={styles.map}
           provider={PROVIDER_GOOGLE}
-          showsUserLocation={false}
-          showsMyLocationButton={false}
+          // showsUserLocation={false}
+          // showsMyLocationButton={false}
           initialRegion={{
             latitude: userLocation?.latitude,
             longitude: userLocation?.longitude,
@@ -264,7 +265,23 @@ const Home = ({navigation, route}) => {
       </View>
 
       <View style={styles.bottomContainer}>
-        <View style={styles.bottomContainerInner}>
+        <View>
+          <FlatList
+            data={RidersData}
+            keyExtractor={item => item.id.toString()}
+            horizontal={true}
+            showsHorizontalScrollIndicator={false}
+            renderItem={({item}) => (
+              <RideOption
+                {...item}
+                setRiderDetails={setRiderDetails}
+                captainData={captainData}
+                userLocation={userLocation}
+              />
+            )}
+          />
+        </View>
+        {/* <View style={styles.bottomContainerInner}>
           <TouchableOpacity
             style={styles.bottomBar}
             onPress={() => navigation.navigate('Destination', {userLocation})}>
@@ -276,19 +293,7 @@ const Home = ({navigation, route}) => {
               style={styles.destinationInput}
             />
           </TouchableOpacity>
-
-          <View style={styles.inputStyle}>
-            {RidersData.map(ride => (
-              <RideOption
-                key={ride.id}
-                {...ride}
-                setRiderDetails={setRiderDetails}
-                captainData={captainData}
-                userLocation={userLocation}
-              />
-            ))}
-          </View>
-        </View>
+        </View> */}
       </View>
 
       {/* Modal */}
@@ -318,7 +323,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   mapContainer: {
-    flex: 0.7,
+    flex: 0.6,
   },
   map: {
     flex: 1,
@@ -358,7 +363,7 @@ const styles = StyleSheet.create({
     gap: 5,
   },
   bottomContainer: {
-    flex: 0.3,
+    flex: 0.4,
     paddingHorizontal: 15,
     paddingVertical: 20,
   },
@@ -383,8 +388,8 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
   },
   riderIcon: {
-    width: 40,
-    height: 40,
+    width: 30,
+    height: 30,
     resizeMode: 'contain',
   },
 });
