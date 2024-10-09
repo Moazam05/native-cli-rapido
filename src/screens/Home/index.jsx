@@ -20,6 +20,7 @@ import {GOOGLE_MAPS_API_KEY} from '@env';
 import GPSModal from './components/GPSModal';
 import {findClosestCaptain, generateCaptainData} from '../../utils';
 import {Fonts} from '../../constants/fonts';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
 const Home = ({navigation, route}) => {
   const mapRef = useRef();
@@ -261,15 +262,6 @@ const Home = ({navigation, route}) => {
           <View style={styles.menuButton}>
             <Ionicons name="menu" size={22} color={themeColors.GRAY} />
           </View>
-
-          <View style={styles.searchBar}>
-            <FontAwesome name="circle-o" size={17} color={themeColors.GREEN} />
-            <TextInput
-              placeholder="Current Location"
-              value={currentAddress}
-              style={styles.inputStyle}
-            />
-          </View>
         </View>
       </View>
 
@@ -307,6 +299,34 @@ const Home = ({navigation, route}) => {
               </TouchableOpacity>
             )}
           />
+
+          {/*  */}
+          <View style={styles.searchBar}>
+            <FontAwesome5
+              name="dot-circle"
+              size={17}
+              color={themeColors.GREEN}
+            />
+            <TextInput
+              placeholder="Current Location"
+              value={currentAddress}
+              style={styles.inputStyle}
+              multiline={true}
+              // editable={false}
+            />
+          </View>
+
+          {/* Destination */}
+          <TouchableOpacity
+            style={[styles.searchBar, styles.bottomSearchBar]}
+            onPress={() => navigation.navigate('Destination', {userLocation})}>
+            <Ionicons name="search" size={17} color={themeColors.GREEN} />
+            <TextInput
+              value={formatAddress}
+              placeholder="Where are you going ?"
+              editable={false}
+            />
+          </TouchableOpacity>
         </View>
         {/* <View style={styles.bottomContainerInner}>
           <TouchableOpacity
@@ -342,13 +362,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: themeColors.WHITE,
   },
-  inputStyle: {
-    flex: 1,
-  },
-  destinationInput: {
-    backgroundColor: themeColors.WHITE,
-    flex: 1,
-  },
+
   mapContainer: {
     flex: 0.6,
   },
@@ -381,34 +395,27 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   searchBar: {
-    backgroundColor: themeColors.WHITE,
-    flex: 1,
-    borderRadius: 30,
+    borderRadius: 8,
     paddingHorizontal: 15,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 5,
+    marginTop: 10,
+  },
+  bottomSearchBar: {
+    backgroundColor: themeColors.PRIMARY_BG,
+  },
+  inputStyle: {
+    flex: 1,
+    fontSize: 14,
+    overflow: 'hidden',
   },
   bottomContainer: {
     flex: 0.4,
     paddingHorizontal: 15,
     paddingVertical: 20,
   },
-  bottomContainerInner: {
-    backgroundColor: '#E7E7E7',
-    height: '100%',
-    borderRadius: 20,
-  },
-  bottomBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: themeColors.WHITE,
-    marginHorizontal: 15,
-    marginVertical: 15,
-    paddingHorizontal: 15,
-    borderRadius: 25,
-    gap: 10,
-  },
+
   splash: {
     width: '100%',
     height: 150,
