@@ -12,6 +12,7 @@
     "ios-clean": "cd ios && rm -rf build && xcodebuild clean && pod update && cd .. && npm run ios"
   },
   "dependencies": {
+    "@faker-js/faker": "^9.0.3",
     "@react-navigation/native": "^6.1.18",
     "@react-navigation/native-stack": "^6.11.0",
     "axios": "^1.7.7",

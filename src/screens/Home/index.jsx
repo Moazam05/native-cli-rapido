@@ -17,6 +17,7 @@ import axios from 'axios';
 import {GOOGLE_MAPS_API_KEY} from '@env';
 import RideOption from './components/RideOption';
 import GPSModal from './components/GPSModal';
+import {generateCaptainData} from '../../utils';
 
 const Home = ({navigation, route}) => {
   const mapRef = useRef();
@@ -33,6 +34,12 @@ const Home = ({navigation, route}) => {
   const [loading, setLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [currentAddress, setCurrentAddress] = useState('');
+
+  console.log('User Location:', userLocation);
+
+  // Finding nearby riders
+  const captainData = generateCaptainData(userLocation);
+  console.log('user', captainData);
 
   // todo: Modal Visibility
   useEffect(() => {
