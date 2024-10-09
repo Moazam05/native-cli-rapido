@@ -34,13 +34,6 @@ const Destination = ({navigation, route}) => {
 
   return (
     <View style={styles.container}>
-      {/* <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Ionicons name="chevron-back" size={25} color={themeColors.BLACK} />
-        </TouchableOpacity>
-        <Text style={styles.title}>Enter Route</Text>
-      </View> */}
-
       {/* Top Bar */}
       <View style={styles.topBar}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
@@ -52,11 +45,7 @@ const Destination = ({navigation, route}) => {
 
       <View style={styles.googlePlacesContainer}>
         <GooglePlacesAutocomplete
-          placeholder="Search"
-          //   onPress={(data, details = null) => {
-          // console.log('Google Places Data', data, details);
-          //     navigation.navigate('Home', {details});
-          //   }}
+          placeholder="To"
           onPress={handlePlaceClick}
           query={{
             key: GOOGLE_MAPS_API_KEY,

@@ -40,8 +40,6 @@ const Home = ({navigation, route}) => {
   const [riderDetails, setRiderDetails] = useState(null);
   const [selectedVehicle, setSelectedVehicle] = useState('1');
 
-  console.log('selectedVehicle', selectedVehicle);
-
   console.log('riderDetails', riderDetails);
 
   const RidersData = [
@@ -212,7 +210,7 @@ const Home = ({navigation, route}) => {
 
           {/* Nearby Riders */}
           {userLocation &&
-            captainData?.map((captain, index) => (
+            captainData?.map(captain => (
               <Marker
                 key={captain.id}
                 enableFlatMode={true}
@@ -335,19 +333,6 @@ const Home = ({navigation, route}) => {
             />
           </TouchableOpacity>
         </View>
-        {/* <View style={styles.bottomContainerInner}>
-          <TouchableOpacity
-            style={styles.bottomBar}
-            onPress={() => navigation.navigate('Destination', {userLocation})}>
-            <Ionicons name="search" size={19} color={themeColors.BLACK} />
-            <TextInput
-              value={formatAddress}
-              placeholder="Where are you going ?"
-              editable={false}
-              style={styles.destinationInput}
-            />
-          </TouchableOpacity>
-        </View> */}
       </View>
 
       {/* Modal */}
