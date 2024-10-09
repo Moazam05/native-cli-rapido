@@ -17,7 +17,11 @@ import {themeColors} from '../../constants/colors';
 import axios from 'axios';
 import {GOOGLE_MAPS_API_KEY} from '@env';
 import GPSModal from './components/GPSModal';
-import {findClosestCaptain, generateCaptainData} from '../../utils';
+import {
+  findClosestCaptain,
+  generateCaptainData,
+  thousandSeparator,
+} from '../../utils';
 import {Fonts} from '../../constants/fonts';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
@@ -39,6 +43,7 @@ const Home = ({navigation, route}) => {
   const [riderDetails, setRiderDetails] = useState(null);
   const [selectedVehicle, setSelectedVehicle] = useState('1');
   // const [captainData, setCaptainData] = useState([]);
+  const [cabType, setCabType] = useState('Bike');
 
   const RidersData = [
     {
@@ -60,6 +65,17 @@ const Home = ({navigation, route}) => {
       distance: distanceInKm,
     },
   ];
+
+  function calculateFare(dis, vehicle) {
+    const fareRates = {
+      Bike: 30,
+      Auto: 50,
+      Car: 70,
+    };
+
+    const fare = dis * fareRates[vehicle];
+    return fare.toFixed(0);
+  }
 
   // todo: Modal Visibility
   useEffect(() => {
@@ -182,7 +198,6 @@ const Home = ({navigation, route}) => {
   const captainData = generateCaptainData(userLocation);
 
   useEffect(() => {
-    console.log('called');
     if (selectedVehicle) {
       const closestCaptain = findClosestCaptain(userLocation, captainData);
       setRiderDetails(closestCaptain);
@@ -191,6 +206,7 @@ const Home = ({navigation, route}) => {
 
   const handleRider = item => {
     setSelectedVehicle(item.id);
+    setCabType(item.label);
     const closestCaptain = findClosestCaptain(userLocation, captainData);
     setRiderDetails(closestCaptain);
   };
@@ -344,8 +360,32 @@ const Home = ({navigation, route}) => {
                   style={styles.captionIcon}
                 />
                 <View style={styles.cardInfo}>
-                  <Text style={styles.cardName}>{riderDetails?.name}</Text>
-                  <Text style={styles.cardPhone}>{riderDetails?.phone}</Text>
+                  <View style={styles.cardWrap}>
+                    <View>
+                      <Text style={styles.cardName}>{riderDetails?.name}</Text>
+                      <Text style={styles.cardPhone}>
+                        {riderDetails?.phone}
+                      </Text>
+                    </View>
+                    <View style={styles.priceWrap}>
+                      <Text
+                        style={
+                          (styles.priceTitle,
+                          {
+                            fontSize: 15,
+                            fontFamily: Fonts.REGULAR,
+                          })
+                        }>
+                        Price
+                      </Text>
+                      <Text style={styles.priceTitle}>
+                        Rs.{' '}
+                        {thousandSeparator(
+                          calculateFare(distanceInKm, cabType),
+                        )}
+                      </Text>
+                    </View>
+                  </View>
                 </View>
               </View>
             </View>
@@ -456,7 +496,21 @@ const styles = StyleSheet.create({
     fontFamily: Fonts.MEDIUM,
     color: themeColors.BLACK,
   },
-
+  cardWrap: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  priceWrap: {
+    marginRight: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  priceTitle: {
+    fontFamily: Fonts.SEMIBOLD,
+    fontSize: 16,
+    color: themeColors.BLACK,
+  },
   captainCard: {
     backgroundColor: themeColors.WHITE,
     borderRadius: 10,
