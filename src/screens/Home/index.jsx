@@ -17,9 +17,9 @@ import {RapidoIcon, SplashLogo} from '../../assets/images';
 import {themeColors} from '../../constants/colors';
 import axios from 'axios';
 import {GOOGLE_MAPS_API_KEY} from '@env';
-import RideOption from './components/RideOption';
 import GPSModal from './components/GPSModal';
-import {generateCaptainData} from '../../utils';
+import {findClosestCaptain, generateCaptainData} from '../../utils';
+import {Fonts} from '../../constants/fonts';
 
 const Home = ({navigation, route}) => {
   const mapRef = useRef();
@@ -37,24 +37,27 @@ const Home = ({navigation, route}) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [currentAddress, setCurrentAddress] = useState('');
   const [riderDetails, setRiderDetails] = useState(null);
+  const [selectedVehicle, setSelectedVehicle] = useState('1');
+
+  console.log('selectedVehicle', selectedVehicle);
 
   console.log('riderDetails', riderDetails);
 
   const RidersData = [
     {
-      id: 1,
+      id: '1',
       iconName: 'bicycle',
       label: 'Bike',
       distance: distanceInKm,
     },
     {
-      id: 2,
+      id: '2',
       iconName: 'car-sport-outline',
       label: 'Car',
       distance: distanceInKm,
     },
     {
-      id: 3,
+      id: '3',
       iconName: 'car',
       label: 'Auto',
       distance: distanceInKm,
@@ -178,6 +181,12 @@ const Home = ({navigation, route}) => {
     );
   }
 
+  const handleRider = item => {
+    setSelectedVehicle(item.id);
+    const closestCaptain = findClosestCaptain(userLocation, captainData);
+    setRiderDetails(closestCaptain);
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.mapContainer}>
@@ -272,12 +281,30 @@ const Home = ({navigation, route}) => {
             horizontal={true}
             showsHorizontalScrollIndicator={false}
             renderItem={({item}) => (
-              <RideOption
-                {...item}
-                setRiderDetails={setRiderDetails}
-                captainData={captainData}
-                userLocation={userLocation}
-              />
+              <TouchableOpacity
+                style={[
+                  styles.card,
+                  item.id === selectedVehicle && {
+                    backgroundColor: themeColors.PRIMARY_LIGHT,
+                  },
+                ]}
+                onPress={() => handleRider(item)}>
+                <View
+                  style={{
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                  }}>
+                  <View>
+                    <Ionicons
+                      name={item?.iconName}
+                      size={30}
+                      color={themeColors.PRIMARY}
+                    />
+                  </View>
+
+                  <Text style={styles.label}>{item?.label}</Text>
+                </View>
+              </TouchableOpacity>
             )}
           />
         </View>
@@ -391,5 +418,21 @@ const styles = StyleSheet.create({
     width: 30,
     height: 30,
     resizeMode: 'contain',
+  },
+  card: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: 10,
+    padding: 10,
+    marginHorizontal: 10,
+    width: 90,
+    borderWidth: 1,
+    borderColor: themeColors.PRIMARY,
+  },
+
+  label: {
+    fontSize: 14,
+    fontFamily: Fonts.MEDIUM,
+    color: themeColors.BLACK,
   },
 });

@@ -4,6 +4,7 @@ export const themeColors = {
   GRAY: '#878787',
   LIGHTGREY: '#C4C4C4',
   PRIMARY: '#F6C41F',
+  PRIMARY_LIGHT: 'rgba(246, 195, 30, 0.15)',
 
   // OLD
   ERROR: '#F14141',
