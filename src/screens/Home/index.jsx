@@ -3,6 +3,7 @@ import {
   AppState,
   Image,
   StyleSheet,
+  Text,
   TextInput,
   TouchableOpacity,
   View,
@@ -11,7 +12,7 @@ import GetLocation from 'react-native-get-location';
 import MapView, {Marker, PROVIDER_GOOGLE, Polyline} from 'react-native-maps';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {SplashLogo} from '../../assets/images';
+import {RapidoIcon, SplashLogo} from '../../assets/images';
 import {themeColors} from '../../constants/colors';
 import axios from 'axios';
 import {GOOGLE_MAPS_API_KEY} from '@env';
@@ -177,15 +178,25 @@ const Home = ({navigation, route}) => {
 
           {/* Nearby Riders */}
           {userLocation &&
-            captainData &&
-            captainData.map((captain, index) => (
+            captainData?.map((captain, index) => (
               <Marker
-                key={index}
+                key={captain.id}
+                enableFlatMode={true}
+                zIndex={0}
                 coordinate={{
                   latitude: captain?.lat,
                   longitude: captain?.long,
                 }}>
-                <Ionicons name="car" size={30} color={themeColors.PRIMARY} />
+                <View>
+                  <Image
+                    source={RapidoIcon}
+                    style={{
+                      width: 40,
+                      height: 40,
+                      resizeMode: 'contain',
+                    }}
+                  />
+                </View>
               </Marker>
             ))}
 
