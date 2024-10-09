@@ -216,18 +216,16 @@ const Home = ({navigation, route}) => {
           }}>
           <Marker coordinate={userLocation} />
 
-          {/* Nearby Riders */}
           {/* Captain Markers */}
           {captainData.map(captain => (
             <Marker
               key={captain.id}
-              tracksViewChanges={false}
+              image={RapidoIcon}
               coordinate={{
                 latitude: captain.lat,
                 longitude: captain.long,
-              }}>
-              <Image source={RapidoIcon} style={styles.riderIcon} />
-            </Marker>
+              }}
+            />
           ))}
 
           {/* Destination Marker */}
@@ -436,11 +434,6 @@ const styles = StyleSheet.create({
   splash: {
     width: '100%',
     height: 150,
-    resizeMode: 'contain',
-  },
-  riderIcon: {
-    width: 30,
-    height: 30,
     resizeMode: 'contain',
   },
   card: {
