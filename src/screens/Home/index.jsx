@@ -35,6 +35,9 @@ const Home = ({navigation, route}) => {
   const [loading, setLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [currentAddress, setCurrentAddress] = useState('');
+  const [riderDetails, setRiderDetails] = useState(null);
+
+  console.log('riderDetails', riderDetails);
 
   const RidersData = [
     {
@@ -57,9 +60,7 @@ const Home = ({navigation, route}) => {
     },
   ];
 
-  // console.log('User Location:', userLocation);
-
-  // Finding nearby riders
+  // todo: Finding nearby riders (captains)
   const captainData = generateCaptainData(userLocation);
 
   // todo: Modal Visibility
@@ -128,6 +129,7 @@ const Home = ({navigation, route}) => {
     }
   };
 
+  // todo: Get Address from Coordinates
   useEffect(() => {
     if (userLocation) {
       const fetchAddress = async () => {
@@ -204,19 +206,13 @@ const Home = ({navigation, route}) => {
                 key={captain.id}
                 enableFlatMode={true}
                 zIndex={0}
+                tracksViewChanges={false}
                 coordinate={{
                   latitude: captain?.lat,
                   longitude: captain?.long,
                 }}>
                 <View>
-                  <Image
-                    source={RapidoIcon}
-                    style={{
-                      width: 40,
-                      height: 40,
-                      resizeMode: 'contain',
-                    }}
-                  />
+                  <Image source={RapidoIcon} style={styles.riderIcon} />
                 </View>
               </Marker>
             ))}
@@ -283,7 +279,13 @@ const Home = ({navigation, route}) => {
 
           <View style={styles.inputStyle}>
             {RidersData.map(ride => (
-              <RideOption key={ride.id} {...ride} />
+              <RideOption
+                key={ride.id}
+                {...ride}
+                setRiderDetails={setRiderDetails}
+                captainData={captainData}
+                userLocation={userLocation}
+              />
             ))}
           </View>
         </View>
@@ -378,6 +380,11 @@ const styles = StyleSheet.create({
   splash: {
     width: '100%',
     height: 150,
+    resizeMode: 'contain',
+  },
+  riderIcon: {
+    width: 40,
+    height: 40,
     resizeMode: 'contain',
   },
 });

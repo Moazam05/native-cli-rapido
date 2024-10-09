@@ -3,22 +3,34 @@ import React from 'react';
 import {themeColors} from '../../../constants/colors';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {Fonts} from '../../../constants/fonts';
-import {thousandSeparator} from '../../../utils';
+import {findClosestCaptain, thousandSeparator} from '../../../utils';
 
-const RideOption = ({iconName, label, distance}) => {
-  function calculateFare(dis, vehicle) {
-    const fareRates = {
-      Bike: 30,
-      Auto: 50,
-      Car: 70,
-    };
+function calculateFare(dis, vehicle) {
+  const fareRates = {
+    Bike: 30,
+    Auto: 50,
+    Car: 70,
+  };
 
-    const fare = dis * fareRates[vehicle];
-    return fare.toFixed(0);
-  }
+  const fare = dis * fareRates[vehicle];
+  return fare.toFixed(0);
+}
+
+const RideOption = ({
+  iconName,
+  label,
+  distance,
+  setRiderDetails,
+  captainData,
+  userLocation,
+}) => {
+  const handleRider = async () => {
+    const closestCaptain = await findClosestCaptain(userLocation, captainData);
+    setRiderDetails(closestCaptain);
+  };
 
   return (
-    <TouchableOpacity style={styles.container}>
+    <TouchableOpacity style={styles.container} onPress={handleRider}>
       <View style={styles.card}>
         <View style={styles.row}>
           <View style={styles.iconTextContainer}>
