@@ -1,4 +1,8 @@
-import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import {GOOGLE_MAPS_API_KEY} from '@env';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useNavigation, useRoute} from '@react-navigation/native';
+import axios from 'axios';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
   AppState,
   FlatList,
@@ -10,25 +14,22 @@ import {
   View,
 } from 'react-native';
 import GetLocation from 'react-native-get-location';
-import MapView, {Marker, PROVIDER_GOOGLE, Polyline} from 'react-native-maps';
+import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
+import MapViewDirections from 'react-native-maps-directions';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import {useDispatch} from 'react-redux';
 import {RapidoIcon, SplashLogo} from '../../assets/images';
 import {themeColors} from '../../constants/colors';
-import axios from 'axios';
-import {GOOGLE_MAPS_API_KEY} from '@env';
-import GPSModal from './components/GPSModal';
+import {Fonts} from '../../constants/fonts';
+import useTypedSelector from '../../hooks/useTypedSelector';
+import {selectedAddress, setAddress} from '../../redux/address/addressSlice';
 import {
   findClosestCaptain,
   generateCaptainData,
   thousandSeparator,
 } from '../../utils';
-import {Fonts} from '../../constants/fonts';
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import {useNavigation, useRoute} from '@react-navigation/native';
-import useTypedSelector from '../../hooks/useTypedSelector';
-import {selectedAddress, setAddress} from '../../redux/address/addressSlice';
-import {useDispatch} from 'react-redux';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import GPSModal from './components/GPSModal';
 
 const Home = () => {
   const navigation = useNavigation();
@@ -266,19 +267,12 @@ const Home = () => {
 
           {/* Polyline */}
           {lat && lng && (
-            <Polyline
-              coordinates={[
-                {
-                  latitude: userLocation.latitude,
-                  longitude: userLocation.longitude,
-                },
-                {
-                  latitude: lat,
-                  longitude: lng,
-                },
-              ]}
-              strokeColor="#238C23"
-              strokeWidth={1.7}
+            <MapViewDirections
+              origin={userLocation}
+              destination={{latitude: lat, longitude: lng}}
+              apikey={GOOGLE_MAPS_API_KEY}
+              strokeWidth={3}
+              strokeColor={themeColors.PRIMARY}
             />
           )}
         </MapView>
