@@ -6,7 +6,7 @@ import {themeColors} from '../../constants/colors';
 const Splash = ({navigation}) => {
   useEffect(() => {
     setTimeout(() => {
-      navigation.replace('Home');
+      navigation.replace('PreHome');
     }, 2000);
   }, []);
 
