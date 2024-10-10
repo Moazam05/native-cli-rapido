@@ -1,12 +1,12 @@
-import React, {useEffect, useRef, useState} from 'react';
-import {View, Text, StyleSheet} from 'react-native';
-import {check, request, PERMISSIONS} from 'react-native-permissions';
+import React, {useEffect, useState} from 'react';
+import {StyleSheet, Text, View, AppState} from 'react-native';
+import {check, PERMISSIONS, request} from 'react-native-permissions';
 import {themeColors} from '../../constants/colors';
-import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
+import DefaultMap from './components/DefaultMap';
 
 const HomeNew = () => {
-  const mapRef = useRef();
   const [locationPermission, setLocationPermission] = useState(null);
+
   console.log('locationPermission', locationPermission);
 
   useEffect(() => {
@@ -39,13 +39,38 @@ const HomeNew = () => {
   }, []);
 
   useEffect(() => {
+    const handleAppStateChange = async state => {
+      if (state === 'active') {
+        const fineLocationStatus = await check(
+          PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
+        );
+        const coarseLocationStatus = await check(
+          PERMISSIONS.ANDROID.ACCESS_COARSE_LOCATION,
+        );
+
+        setLocationPermission(
+          fineLocationStatus === 'granted' || coarseLocationStatus === 'granted'
+            ? 'granted'
+            : fineLocationStatus,
+        );
+      }
+    };
+
+    AppState.addEventListener('change', handleAppStateChange);
+
+    return () => {
+      AppState.removeEventListener('change', handleAppStateChange);
+    };
+  }, []);
+
+  useEffect(() => {
     if (locationPermission === 'denied') {
       const timeoutId = setTimeout(async () => {
         const requestedPermission = await request(
           PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
         );
         setLocationPermission(requestedPermission);
-      }, 5000);
+      }, 3000);
       return () => clearTimeout(timeoutId);
     }
   }, [locationPermission]);
@@ -53,25 +78,9 @@ const HomeNew = () => {
   return (
     <View style={styles.container}>
       {locationPermission === 'granted' ? (
-        <Text>Permission granted</Text>
+        <Text>Location Permission Granted</Text>
       ) : (
-        <MapView
-          ref={mapRef}
-          style={styles.map}
-          provider={PROVIDER_GOOGLE}
-          initialRegion={{
-            latitude: 37.78825,
-            longitude: -122.4324,
-            latitudeDelta: 0.0922,
-            longitudeDelta: 0.0421,
-          }}>
-          <Marker
-            coordinate={{
-              latitude: 37.78825,
-              longitude: -122.4324,
-            }}
-          />
-        </MapView>
+        <DefaultMap />
       )}
     </View>
   );
@@ -83,8 +92,5 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: themeColors.WHITE,
-  },
-  map: {
-    flex: 1,
   },
 });
