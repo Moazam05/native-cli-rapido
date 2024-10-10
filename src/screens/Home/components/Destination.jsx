@@ -7,8 +7,11 @@ import Toast from 'react-native-toast-message';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {themeColors} from '../../../constants/colors';
 import {Fonts} from '../../../constants/fonts';
+import {useNavigation, useRoute} from '@react-navigation/native';
 
-const Destination = ({navigation, route}) => {
+const Destination = () => {
+  const navigation = useNavigation();
+  const route = useRoute();
   const userLocation = route?.params?.userLocation || {};
 
   const handlePlaceClick = (data, details = null) => {

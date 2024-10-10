@@ -24,8 +24,11 @@ import {
 } from '../../utils';
 import {Fonts} from '../../constants/fonts';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import {useNavigation, useRoute} from '@react-navigation/native';
 
-const Home = ({navigation, route}) => {
+const Home = () => {
+  const navigation = useNavigation();
+  const route = useRoute();
   const mapRef = useRef();
   const destination = route?.params?.details?.geometry?.location || {};
   const formatAddress = route?.params?.details?.formatted_address || '';
