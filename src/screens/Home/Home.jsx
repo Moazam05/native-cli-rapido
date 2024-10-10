@@ -25,6 +25,8 @@ import {
 import {Fonts} from '../../constants/fonts';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import {useNavigation, useRoute} from '@react-navigation/native';
+import useTypedSelector from '../../hooks/useTypedSelector';
+import {selectedAddress} from '../../redux/address/addressSlice';
 
 const Home = () => {
   const navigation = useNavigation();
@@ -48,9 +50,8 @@ const Home = () => {
   // const [captainData, setCaptainData] = useState([]);
   const [cabType, setCabType] = useState('Bike');
 
-  console.log('locationEnabled', locationEnabled);
-  console.log('modalVisible', modalVisible);
-  console.log('currentAddress', currentAddress);
+  const getCurrentAddress = useTypedSelector(selectedAddress);
+  console.log('getCurrentAddress', getCurrentAddress);
 
   const RidersData = [
     {
