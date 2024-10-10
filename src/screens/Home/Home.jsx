@@ -54,7 +54,6 @@ const Home = () => {
   const [cabType, setCabType] = useState('Bike');
 
   const getCurrentAddress = useTypedSelector(selectedAddress);
-  console.log('getCurrentAddress', getCurrentAddress);
 
   const RidersData = [
     {
@@ -292,7 +291,11 @@ const Home = () => {
         </View>
       </View>
 
-      <View style={styles.bottomContainer}>
+      <View
+        style={[
+          styles.bottomContainer,
+          destination && styles.bottomContainerTwo,
+        ]}>
         <View>
           <FlatList
             data={RidersData}
@@ -423,6 +426,14 @@ const styles = StyleSheet.create({
   mapContainer: {
     flex: 0.55,
   },
+  bottomContainer: {
+    flex: 0.45,
+    paddingHorizontal: 15,
+    paddingVertical: 20,
+  },
+  bottomContainerTwo: {
+    flex: 0.5,
+  },
   map: {
     flex: 1,
   },
@@ -475,11 +486,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     overflow: 'hidden',
     color: themeColors.BLACK,
-  },
-  bottomContainer: {
-    flex: 0.45,
-    paddingHorizontal: 15,
-    paddingVertical: 20,
   },
 
   splash: {
