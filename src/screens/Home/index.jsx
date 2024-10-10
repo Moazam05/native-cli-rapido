@@ -90,9 +90,8 @@ const Home = ({navigation, route}) => {
     const appStateListener = AppState.addEventListener(
       'change',
       nextAppState => {
-        // console.log('App state:', nextAppState);
-        if (nextAppState === 'active') {
-          checkLocationServices(); // todo
+        if (nextAppState === 'active' && !locationEnabled) {
+          checkLocationServices();
         }
       },
     );
@@ -100,7 +99,7 @@ const Home = ({navigation, route}) => {
     return () => {
       appStateListener.remove();
     };
-  }, []);
+  }, [locationEnabled]);
 
   // todo: Get Location Coordinates
   const checkLocationServices = async () => {
