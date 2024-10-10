@@ -91,12 +91,15 @@ const Home = () => {
   useEffect(() => {
     if (getCurrentAddress?.latitude) {
       setModalVisible(false);
+      setUserLocation(getCurrentAddress);
     }
   }, [getCurrentAddress]);
 
   // todo: Check location services
   useEffect(() => {
-    checkLocationServices();
+    if (!getCurrentAddress?.latitude) {
+      checkLocationServices();
+    }
   }, []);
 
   // todo: Listen to app state changes (foreground/background) ***IMPORTANT***
