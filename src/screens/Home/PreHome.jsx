@@ -3,7 +3,7 @@ import {StyleSheet, View, AppState} from 'react-native';
 import {check, PERMISSIONS, request} from 'react-native-permissions';
 import {themeColors} from '../../constants/colors';
 import DefaultMap from './components/DefaultMap';
-import Home from '.';
+import Home from './Home';
 
 const PreHome = () => {
   const [locationPermission, setLocationPermission] = useState(null);
