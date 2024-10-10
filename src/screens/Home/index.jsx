@@ -240,7 +240,7 @@ const Home = ({navigation, route}) => {
           {captainData.map(captain => (
             <Marker
               key={captain.id}
-              image={RapidoIcon}
+              icon={RapidoIcon}
               coordinate={{
                 latitude: captain.lat,
                 longitude: captain.long,
