@@ -38,12 +38,15 @@ const Home = ({navigation, route}) => {
     longitude: 0,
   });
   const [loading, setLoading] = useState(false);
-  const [modalVisible, setModalVisible] = useState(false);
+  const [modalVisible, setModalVisible] = useState(true);
   const [currentAddress, setCurrentAddress] = useState('');
   const [riderDetails, setRiderDetails] = useState(null);
   const [selectedVehicle, setSelectedVehicle] = useState('1');
   // const [captainData, setCaptainData] = useState([]);
   const [cabType, setCabType] = useState('Bike');
+
+  console.log('locationEnabled', locationEnabled);
+  console.log('modalVisible', modalVisible);
 
   const RidersData = [
     {
@@ -81,8 +84,6 @@ const Home = ({navigation, route}) => {
   useEffect(() => {
     if (locationEnabled) {
       setModalVisible(false);
-    } else {
-      setModalVisible(true);
     }
   }, [locationEnabled]);
 
