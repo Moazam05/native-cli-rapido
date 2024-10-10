@@ -89,7 +89,6 @@ const Home = () => {
 
   useEffect(() => {
     if (getCurrentAddress?.latitude) {
-      setModalVisible(false);
       setUserLocation(getCurrentAddress);
     }
   }, [getCurrentAddress]);
@@ -404,7 +403,9 @@ const Home = () => {
       </View>
 
       {/* Modal */}
-      <GPSModal visible={modalVisible} loading={loading} />
+      {!getCurrentAddress?.latitude && (
+        <GPSModal visible={modalVisible} loading={loading} />
+      )}
     </View>
   );
 };
