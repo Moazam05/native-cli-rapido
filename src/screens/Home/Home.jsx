@@ -30,6 +30,7 @@ import {
   thousandSeparator,
 } from '../../utils';
 import GPSModal from './components/GPSModal';
+import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 
 const Home = () => {
   const navigation = useNavigation();
@@ -277,10 +278,30 @@ const Home = () => {
           )}
         </MapView>
 
+        {/* Menu icon */}
         <View style={styles.searchBarContainer}>
           <View style={styles.menuButton}>
             <Ionicons name="menu" size={22} color={themeColors.GRAY} />
           </View>
+        </View>
+
+        {/* current location */}
+        <View style={styles.currentLocation}>
+          <FontAwesome6
+            name="location-arrow"
+            size={22}
+            color={themeColors.PRIMARY}
+            onPress={() => {
+              mapRef.current.animateToRegion(
+                {
+                  ...userLocation,
+                  latitudeDelta: 0.015,
+                  longitudeDelta: 0.015,
+                },
+                1000,
+              );
+            }}
+          />
         </View>
       </View>
 
@@ -338,7 +359,7 @@ const Home = () => {
           <TouchableOpacity
             style={[styles.searchBar, styles.bottomSearchBar]}
             onPress={() => navigation.navigate('Destination', {userLocation})}>
-            <Ionicons name="search" size={17} color={themeColors.GREEN} />
+            <Ionicons name="search" size={17} color={themeColors.BLACK} />
 
             <TextInput
               value={formatAddress}
@@ -497,6 +518,24 @@ const styles = StyleSheet.create({
     width: 90,
     borderWidth: 1,
     borderColor: themeColors.PRIMARY,
+  },
+  currentLocation: {
+    position: 'absolute',
+    bottom: 10,
+    right: 15,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: themeColors.WHITE,
+    padding: 10,
+    borderRadius: 10,
+    shadowColor: themeColors.BLACK,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
 
   label: {
