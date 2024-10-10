@@ -3,6 +3,7 @@ import {StyleSheet, Text, View, AppState} from 'react-native';
 import {check, PERMISSIONS, request} from 'react-native-permissions';
 import {themeColors} from '../../constants/colors';
 import DefaultMap from './components/DefaultMap';
+import Home from '.';
 
 const HomeNew = () => {
   const [locationPermission, setLocationPermission] = useState(null);
@@ -77,11 +78,7 @@ const HomeNew = () => {
 
   return (
     <View style={styles.container}>
-      {locationPermission === 'granted' ? (
-        <Text>Location Permission Granted</Text>
-      ) : (
-        <DefaultMap />
-      )}
+      {locationPermission === 'granted' ? <Home /> : <DefaultMap />}
     </View>
   );
 };
