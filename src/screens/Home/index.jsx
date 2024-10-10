@@ -80,13 +80,6 @@ const Home = ({navigation, route}) => {
     return fare.toFixed(0);
   }
 
-  // todo: Modal Visibility
-  useEffect(() => {
-    if (locationEnabled) {
-      setModalVisible(false);
-    }
-  }, [locationEnabled]);
-
   // todo: Check location services
   useEffect(() => {
     checkLocationServices();
