@@ -26,12 +26,15 @@ import {Fonts} from '../../constants/fonts';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import useTypedSelector from '../../hooks/useTypedSelector';
-import {selectedAddress} from '../../redux/address/addressSlice';
+import {selectedAddress, setAddress} from '../../redux/address/addressSlice';
+import {useDispatch} from 'react-redux';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Home = () => {
   const navigation = useNavigation();
   const route = useRoute();
   const mapRef = useRef();
+  const dispatch = useDispatch();
   const destination = route?.params?.details?.geometry?.location || {};
   const formatAddress = route?.params?.details?.formatted_address || '';
   const distanceInKm = route?.params?.distanceInKm || 0;
@@ -85,6 +88,12 @@ const Home = () => {
     return fare.toFixed(0);
   }
 
+  useEffect(() => {
+    if (getCurrentAddress?.latitude) {
+      setModalVisible(false);
+    }
+  }, [getCurrentAddress]);
+
   // todo: Check location services
   useEffect(() => {
     checkLocationServices();
@@ -106,10 +115,6 @@ const Home = () => {
 
   // todo: Get Location Coordinates
   const checkLocationServices = useCallback(async () => {
-    if (currentAddress?.length > 0) {
-      return;
-    }
-
     setLoading(true);
 
     try {
@@ -130,6 +135,8 @@ const Home = () => {
         setModalVisible(false);
 
         setUserLocation(newUserLocation);
+        dispatch(setAddress(newUserLocation));
+        AsyncStorage.setItem('userLocation', JSON.stringify(newUserLocation));
 
         const captains = generateCaptainData(newUserLocation);
         // console.log('Captains generated:', captains);
@@ -189,10 +196,7 @@ const Home = () => {
   }, [lat, lng, userLocation]);
 
   // todo: Finding nearby riders (captains)
-  const captainData = useMemo(
-    () => generateCaptainData(userLocation),
-    [userLocation],
-  );
+  const captainData = generateCaptainData(userLocation);
 
   useEffect(() => {
     if (selectedVehicle) {
