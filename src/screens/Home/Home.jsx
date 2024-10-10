@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {
   AppState,
   FlatList,
@@ -50,6 +50,7 @@ const Home = () => {
 
   console.log('locationEnabled', locationEnabled);
   console.log('modalVisible', modalVisible);
+  console.log('currentAddress', currentAddress);
 
   const RidersData = [
     {
@@ -99,13 +100,15 @@ const Home = () => {
       },
     );
 
-    return () => {
-      appStateListener.remove();
-    };
+    return () => appStateListener.remove();
   }, [locationEnabled]);
 
   // todo: Get Location Coordinates
-  const checkLocationServices = async () => {
+  const checkLocationServices = useCallback(async () => {
+    if (currentAddress?.length > 0) {
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -149,11 +152,11 @@ const Home = () => {
     } catch (error) {
       setLoading(false);
     }
-  };
+  }, []);
 
   // todo: Get Address from Coordinates
   useEffect(() => {
-    if (userLocation) {
+    if (userLocation.latitude && userLocation.longitude) {
       const fetchAddress = async () => {
         try {
           const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${userLocation.latitude},${userLocation.longitude}&key=${GOOGLE_MAPS_API_KEY}`;
@@ -172,26 +175,23 @@ const Home = () => {
   }, [userLocation]);
 
   useEffect(() => {
-    if ((lat, lng)) {
+    if (lat && lng && mapRef.current) {
       const coordinates = [
-        {
-          latitude: userLocation?.latitude,
-          longitude: userLocation?.longitude,
-        },
-        {
-          latitude: lat,
-          longitude: lng,
-        },
+        {latitude: userLocation?.latitude, longitude: userLocation?.longitude},
+        {latitude: lat, longitude: lng},
       ];
       mapRef.current.fitToCoordinates(coordinates, {
         edgePadding: {top: 150, right: 50, bottom: 50, left: 50},
         animated: true,
       });
     }
-  }, [lat, lng, currentAddress]);
+  }, [lat, lng, userLocation]);
 
   // todo: Finding nearby riders (captains)
-  const captainData = generateCaptainData(userLocation);
+  const captainData = useMemo(
+    () => generateCaptainData(userLocation),
+    [userLocation],
+  );
 
   useEffect(() => {
     if (selectedVehicle) {
@@ -200,12 +200,15 @@ const Home = () => {
     }
   }, [selectedVehicle]);
 
-  const handleRider = item => {
-    setSelectedVehicle(item.id);
-    setCabType(item.label);
-    const closestCaptain = findClosestCaptain(userLocation, captainData);
-    setRiderDetails(closestCaptain);
-  };
+  const handleRider = useCallback(
+    item => {
+      setSelectedVehicle(item.id);
+      setCabType(item.label);
+      const closestCaptain = findClosestCaptain(userLocation, captainData);
+      setRiderDetails(closestCaptain);
+    },
+    [userLocation, captainData],
+  );
 
   // todo: Loading State
   if (!userLocation) {
